@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1066124685294",
+    "project_id": "nu-space-7673d",
+    "storage_bucket": "nu-space-7673d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1066124685294:android:3e121098f7173d49fb28ff",
+        "android_client_info": {
+          "package_name": "com.nuspace.nuspace_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeDLbenD6dsbJUvD7vkXXXqjzxTFNc7FM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

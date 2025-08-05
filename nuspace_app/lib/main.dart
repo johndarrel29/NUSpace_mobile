@@ -1,53 +1,123 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:nuspace_app/constants.dart';
 import 'package:nuspace_app/firebase_options.dart';
+import 'package:nuspace_app/screens/landing_screen.dart';
+import 'package:nuspace_app/services/connectivity_service.dart';
 import 'package:nuspace_app/services/notification_service.dart';
+import 'package:nuspace_app/widgets/snackbarhelper.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  setPreferredOrientations();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   FirebaseMessaging.onBackgroundMessage(
     NotificationService.firebaseBackgroundHandler,
   );
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ConnectivityService>(
+          create: (_) => ConnectivityService(),
+        ),
+      ],
+      child: const MainApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+void setPreferredOrientations() {
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+}
 
-  // This widget is the root of your application.
+final MyCustomNavigatorObserver myObserver = MyCustomNavigatorObserver();
+
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
+
+  static final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'NU Space', home: const HomePage());
-  }
-}
-
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-    NotificationService.requestPermission();
-    NotificationService.initializeFCMListerners();
-    NotificationService.getAndPrintFCMToken(
-      userId: '688c8bcc47a6783fa2509b6d',
-      role: 'student',
+    return ScreenUtilInit(
+      designSize: const Size(412, 715),
+      minTextAdapt: true,
+      splitScreenMode: false,
+      builder: (_, child) {
+        return MaterialApp(
+          navigatorObservers: [myObserver],
+          debugShowCheckedModeBanner: false,
+          title: 'NU Space',
+          scaffoldMessengerKey: scaffoldMessengerKey,
+          initialRoute: '/landingScreen',
+          routes: {'/landingScreen': (context) => const LandingScreen()},
+          theme: ThemeData(scaffoldBackgroundColor: apptheme),
+          builder: (context, child) {
+            return Consumer<ConnectivityService>(
+              builder: (context, connectivityService, child) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  //display snackbar when there is no internet connection
+                  if (connectivityService.wasOffline) {
+                    SnackbarHelper.showConnectivityStatus(
+                      connectivityService.isConnected,
+                    );
+                  }
+                });
+                return child!;
+              },
+              child: child,
+            );
+          },
+        );
+      },
     );
   }
+}
+
+class MyCustomNavigatorObserver extends RouteObserver<PageRoute<dynamic>> {
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPush(route, previousRoute);
+    debugPrint('Pushed: ${route.settings.name}');
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text("NU Space Home")));
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPop(route, previousRoute);
+    debugPrint('Popped: ${route.settings.name}');
   }
 }
+
+// class HomePage extends StatefulWidget {
+//   const HomePage({super.key});
+
+//   @override
+//   State<HomePage> createState() => _HomePageState();
+// }
+
+// class _HomePageState extends State<HomePage> {
+//   @override
+//   void initState() {
+//     super.initState();
+//     NotificationService.requestPermission();
+//     NotificationService.initializeFCMListerners();
+//     NotificationService.getAndPrintFCMToken(
+//       userId: '688c8bcc47a6783fa2509b6d',
+//       role: 'student',
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Scaffold(body: Center(child: Text("NU Space Home")));
+//   }
+// }

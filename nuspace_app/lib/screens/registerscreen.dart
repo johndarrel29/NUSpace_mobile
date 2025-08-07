@@ -164,8 +164,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
           centerTitle: true,
           scrolledUnderElevation: 0,
           leading: IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
+            onPressed: () async {
+              FocusScope.of(context).unfocus(); // First dismiss keyboard
+              await Future.delayed(
+                const Duration(milliseconds: 300),
+              ); // Wait for keyboard to fully close
+
+              if (context.mounted) {
+                Navigator.of(context).pop();
+              }
             },
             icon: Icon(Icons.arrow_back, size: 24.r),
           ),

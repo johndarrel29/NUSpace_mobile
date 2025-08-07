@@ -18,7 +18,7 @@ import '../widgets/snackbarhelper.dart';
 class EmailVerificationScreen extends StatefulWidget {
   final String? email;
 
-  const EmailVerificationScreen({super.key, this.email});
+  const EmailVerificationScreen({super.key, required this.email});
 
   @override
   State<EmailVerificationScreen> createState() =>
@@ -149,10 +149,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     //submit code
     if (_isLoading) return;
 
-    setState(() {
-      _isLoading = true;
-    });
-
     //check for internet connection
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
@@ -191,17 +187,23 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
           print("Response data: $responseData");
           if (response.statusCode == 200 && responseData['success'] == true) {
             print("Email verification: ${responseData['message']}");
+
+            if (mounted) {
+              FocusScope.of(context).unfocus(); // Dismiss keyboard
+              await Future.delayed(
+                const Duration(milliseconds: 300),
+              ); // Let keyboard close
+              if (mounted) {
+                Navigator.of(
+                  context,
+                ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
+              }
+            }
+
             SnackbarHelper.showSnackbar(
               responseData['message'] ?? "Email verified successfully!",
               backgroundColor: Colors.green,
             );
-
-            //go back to login
-            if (mounted) {
-              Navigator.of(
-                context,
-              ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
-            }
           } else {
             print("reponse message: ${responseData['message']}");
             SnackbarHelper.showSnackbar(
@@ -251,7 +253,34 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: whitetheme,
-        appBar: AppBar(scrolledUnderElevation: 0, backgroundColor: whitetheme),
+        appBar: AppBar(
+          centerTitle: true,
+          automaticallyImplyLeading: false,
+          backgroundColor: whitetheme,
+          title: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  "assets/images/nuspace_whitelogo.png",
+                  color: nuBlue,
+                  height: 30.r,
+                  width: 30.r,
+                ),
+                SizedBox(width: 5.w),
+                CustomFont(
+                  text: "NU\nSpace",
+                  fontSize: 14.r,
+                  color: nuBlue,
+                  useGoogleFont: false,
+                  fontFamily: 'ClanOT',
+                  fontWeight: FontWeight.bold,
+                ),
+              ],
+            ),
+          ),
+        ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
           child: Form(

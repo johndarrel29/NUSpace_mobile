@@ -6,7 +6,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nuspace_app/constants.dart';
 import 'package:nuspace_app/firebase_options.dart';
+import 'package:nuspace_app/screens/checkemailscreen.dart';
 import 'package:nuspace_app/screens/emailverificationscreen.dart';
+import 'package:nuspace_app/screens/forgotpasswordscreen.dart';
 import 'package:nuspace_app/screens/homescreen.dart';
 import 'package:nuspace_app/screens/interestscreen.dart';
 import 'package:nuspace_app/screens/landing_screen.dart';
@@ -70,6 +72,7 @@ class MainApp extends StatelessWidget {
             '/registerAccountScreen': (context) => const RegisterScreen(),
             '/interestScreen': (context) => const InterestScreen(),
             '/homeScreen': (context) => const HomeScreen(),
+            '/checkEmailScreen': (context) => const CheckEmailScreen(),
           },
           onGenerateRoute: (settings) {
             //routes that needs arguments
@@ -80,6 +83,11 @@ class MainApp extends StatelessWidget {
                   builder: (_) => EmailVerificationScreen(email: email),
                 );
 
+              case '/forgotPasswordScreen':
+                final email = settings.arguments as String?;
+                return MaterialPageRoute(
+                  builder: (_) => ForgotPasswordScreen(email: email),
+                );
               default:
                 return null;
             }

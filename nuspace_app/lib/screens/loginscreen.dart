@@ -29,7 +29,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  bool _navigateForgotPassword = false;
   String? _errormessage;
 
   final storage = FlutterSecureStorage();
@@ -54,10 +53,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login() async {
     if (_isLoading) return;
-
-    setState(() {
-      _isLoading = true;
-    });
 
     //check for internet connection
     if (!connectivityService.isConnected) {
@@ -220,7 +215,25 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<void> _ForgotPassword() async {}
+  Future<void> _forgotPassword() async {
+    //check for internet connection
+    if (!connectivityService.isConnected) {
+      print("No Internet Connection");
+      SnackbarHelper.showConnectivityStatus(connectivityService.isConnected);
+      return;
+    }
+
+    try {
+      if (mounted) {
+        Navigator.of(context).pushNamed('/checkEmailScreen');
+      }
+
+      print("Going to checkemail first before change password");
+    } catch (e, stackTrace) {
+      print("An error has occured in navigating to check email screen: $e");
+      print("Stacktrace: $stackTrace");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -231,8 +244,15 @@ class _LoginScreenState extends State<LoginScreen> {
         appBar: AppBar(
           centerTitle: true,
           leading: IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
+            onPressed: () async {
+              FocusScope.of(context).unfocus(); // First dismiss keyboard
+              await Future.delayed(
+                const Duration(milliseconds: 300), //change to 500 if want
+              ); // Wait for keyboard to fully close
+
+              if (context.mounted) {
+                Navigator.of(context).pop();
+              }
             },
             icon: Icon(Icons.arrow_back, size: 24.r),
           ),
@@ -309,10 +329,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 10.h),
                 GestureDetector(
-                  onTap: () {
-                    //logic for going to forgot password
-                    print("Forgot password");
-                  },
+                  onTap: _forgotPassword,
                   child: CustomFont(
                     text: "Forgot Password?",
                     fontSize: 14.r,

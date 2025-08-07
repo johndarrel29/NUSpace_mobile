@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nuspace_app/constants.dart';
-import 'package:nuspace_app/screens/loginscreen.dart';
 import 'package:nuspace_app/services/connectivity_service.dart';
 import 'package:nuspace_app/services/notification_service.dart';
 import 'package:nuspace_app/widgets/custombutton.dart';

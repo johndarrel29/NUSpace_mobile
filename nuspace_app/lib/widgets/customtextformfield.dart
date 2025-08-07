@@ -25,11 +25,11 @@ class CustomTextFormField extends StatefulWidget {
 
   CustomTextFormField({
     super.key,
+    required this.labelText,
     required this.hintText,
     required this.controller,
     required this.height, //minimum height ay 10 & width
     required this.width,
-    required this.labelText,
     this.validator,
     this.keyboardType =
         TextInputType.text, //nacocostumize yung keyboard depende sa need

@@ -57,8 +57,6 @@ class NotificationService {
     String role,
   ) async {
     try {
-      final String platform = Platform.isAndroid ? 'android' : 'ios';
-
       final response = await http.post(
         Uri.parse('${AppConfig.baseUrl}/api/device-token'),
         headers: {
@@ -69,7 +67,7 @@ class NotificationService {
           'userId': userId,
           'role': role,
           'token': token,
-          'platform': platform,
+          'platform': "mobile",
         }),
       );
 

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nuspace_app/constants.dart';
+import 'package:nuspace_app/screens/loginscreen.dart';
 import 'package:nuspace_app/services/connectivity_service.dart';
 import 'package:nuspace_app/services/notification_service.dart';
 import 'package:nuspace_app/widgets/custombutton.dart';
@@ -23,7 +24,6 @@ class _LandingScreenState extends State<LandingScreen> {
   bool _navigateLogin = false;
   bool _navigateRegister = false;
   late ConnectivityService connectivityService;
-  StreamSubscription<bool>? connectivitySubscription;
 
   @override
   void initState() {
@@ -34,12 +34,6 @@ class _LandingScreenState extends State<LandingScreen> {
     );
     NotificationService.requestPermission();
     NotificationService.initializeFCMListerners();
-  }
-
-  @override
-  void dispose() {
-    connectivitySubscription?.cancel();
-    super.dispose();
   }
 
   Future<void> _toLogin() async {
@@ -58,12 +52,19 @@ class _LandingScreenState extends State<LandingScreen> {
       return;
     }
 
-    await Future.delayed(Duration(seconds: 1));
-    //navigate to login screen
-    print("Going to login");
-    setState(() {
-      _navigateLogin = false;
-    });
+    try {
+      if (mounted) {
+        Navigator.of(context).pushNamed('/loginScreen');
+      }
+
+      print("Going to login");
+      setState(() {
+        _navigateLogin = false;
+      });
+    } catch (e, stackTrace) {
+      print("An error has occured in navigating to Login Screen: $e");
+      print("Stacktrace: $stackTrace");
+    }
   }
 
   Future<void> _toRegistration() async {
@@ -82,19 +83,25 @@ class _LandingScreenState extends State<LandingScreen> {
       return;
     }
 
-    await Future.delayed(Duration(seconds: 1));
-    //navigate to register screen
-    print("Going to registration screen");
-    setState(() {
-      _navigateRegister = false;
-    });
+    try {
+      if (mounted) {
+        Navigator.of(context).pushNamed('/registerAccountScreen');
+      }
+
+      print("Going to register");
+      setState(() {
+        _navigateRegister = false;
+      });
+    } catch (e, stackTrace) {
+      print("An error has occured in navigating to Login Screen: $e");
+      print("Stacktrace: $stackTrace");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: nuBlue,
-      resizeToAvoidBottomInset: true,
       body: Column(
         children: [
           //blue top section

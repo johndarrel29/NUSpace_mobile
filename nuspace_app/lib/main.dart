@@ -6,7 +6,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nuspace_app/constants.dart';
 import 'package:nuspace_app/firebase_options.dart';
+import 'package:nuspace_app/screens/emailverificationscreen.dart';
+import 'package:nuspace_app/screens/homescreen.dart';
+import 'package:nuspace_app/screens/interestscreen.dart';
 import 'package:nuspace_app/screens/landing_screen.dart';
+import 'package:nuspace_app/screens/loginscreen.dart';
+import 'package:nuspace_app/screens/registerscreen.dart';
 import 'package:nuspace_app/services/connectivity_service.dart';
 import 'package:nuspace_app/services/notification_service.dart';
 import 'package:nuspace_app/widgets/snackbarhelper.dart';
@@ -59,8 +64,27 @@ class MainApp extends StatelessWidget {
           title: 'NU Space',
           scaffoldMessengerKey: scaffoldMessengerKey,
           initialRoute: '/landingScreen',
-          routes: {'/landingScreen': (context) => const LandingScreen()},
-          theme: ThemeData(scaffoldBackgroundColor: apptheme),
+          routes: {
+            '/landingScreen': (context) => const LandingScreen(),
+            '/loginScreen': (context) => const LoginScreen(),
+            '/registerAccountScreen': (context) => const RegisterScreen(),
+            '/interestScreen': (context) => const InterestScreen(),
+            '/homeScreen': (context) => const HomeScreen(),
+          },
+          onGenerateRoute: (settings) {
+            //routes that needs arguments
+            switch (settings.name) {
+              case '/emailVerificationScreen':
+                final email = settings.arguments as String?;
+                return MaterialPageRoute(
+                  builder: (_) => EmailVerificationScreen(email: email),
+                );
+
+              default:
+                return null;
+            }
+          },
+          theme: ThemeData(scaffoldBackgroundColor: whitetheme),
           builder: (context, child) {
             return Consumer<ConnectivityService>(
               builder: (context, connectivityService, child) {

@@ -58,13 +58,17 @@ class CustomButton extends StatelessWidget {
             child: Center(
               child:
                   isLoading
-                      ? CircularProgressIndicator(
-                        color: textColor,
-                        strokeWidth: 4,
+                      ? SizedBox(
+                        width: (height ?? 50.h) * 0.5,
+                        height: (height ?? 50.h) * 0.5,
+                        child: CircularProgressIndicator(
+                          color: textColor,
+                          strokeWidth: 4,
+                        ),
                       )
                       : CustomFont(
                         text: text,
-                        fontSize: fontSize.r,
+                        fontSize: fontSize,
                         fontWeight: fontweight,
                         color: textColor,
                         useGoogleFont: true,

@@ -354,7 +354,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontweight: FontWeight.bold,
                   height: 40.h,
                   isLoading: _isLoading,
-                  onPressed: _login,
+                  onPressed: () {
+                    Duration(milliseconds: 300);
+                    _login();
+                  },
                 ),
               ],
             ),

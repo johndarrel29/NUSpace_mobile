@@ -13,18 +13,18 @@ import 'package:nuspace_app/widgets/customtabswitch.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
-import '../services/connectivity_service.dart';
-import '../utils/internalserverdialog.dart';
-import '../widgets/snackbarhelper.dart';
+import '../../services/connectivity_service.dart';
+import '../../utils/internalserverdialog.dart';
+import '../../widgets/snackbarhelper.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreen> createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
   final storage = FlutterSecureStorage();
   List<Map<String, dynamic>> suggestedRSOs = [];
   List<Map<String, dynamic>> otherRSOs = [];
@@ -42,8 +42,15 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       listen: false,
     );
-    _fetchRecommendedRSOs(); //call this on tab too
-    _fetchAllJoinedRSOs(); // call this on tab na lng
+    refreshData();
+  }
+
+  void refreshData() {
+    setState(() {
+      _isLoading = true;
+    });
+    _fetchRecommendedRSOs();
+    _fetchAllJoinedRSOs();
   }
 
   Future<void> _fetchRecommendedRSOs() async {
@@ -82,7 +89,6 @@ class _HomeScreenState extends State<HomeScreen> {
           .timeout(Duration(seconds: 20));
 
       final responseData = jsonDecode(response.body);
-      print("Response data for recommended rsos: $responseData");
 
       if (response.statusCode == 200 && responseData['success'] == true) {
         if (mounted) {
@@ -100,9 +106,8 @@ class _HomeScreenState extends State<HomeScreen> {
             _isLoading = false;
           });
 
-          print(
-            "Suggested RSOs: $suggestedRSOs and explanation $recommendationExplanation",
-          );
+          print("Suggested RSOs: $suggestedRSOs");
+          print("recommendation explanation $recommendationExplanation");
           print("Other RSOs: $otherRSOs");
         }
       } else {
@@ -115,10 +120,6 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         });
       }
-
-      print(
-        "Suggested RSOs: $suggestedRSOs and explanation $recommendationExplanation",
-      );
     } on TimeoutException {
       // Handle Timeout (Server Down)
       print("Server Timeout! Navigating to Internal Server Error screen.");

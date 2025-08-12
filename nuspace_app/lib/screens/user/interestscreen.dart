@@ -10,10 +10,10 @@ import 'package:nuspace_app/widgets/customfont.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
-import '../constants.dart';
-import '../services/connectivity_service.dart';
-import '../utils/internalserverdialog.dart';
-import '../widgets/snackbarhelper.dart';
+import '../../constants.dart';
+import '../../services/connectivity_service.dart';
+import '../../utils/internalserverdialog.dart';
+import '../../widgets/snackbarhelper.dart';
 
 class InterestScreen extends StatefulWidget {
   const InterestScreen({super.key});

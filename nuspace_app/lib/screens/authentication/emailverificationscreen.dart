@@ -11,9 +11,9 @@ import 'package:nuspace_app/widgets/customfont.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
-import '../services/connectivity_service.dart';
-import '../utils/internalserverdialog.dart';
-import '../widgets/snackbarhelper.dart';
+import '../../services/connectivity_service.dart';
+import '../../utils/internalserverdialog.dart';
+import '../../widgets/snackbarhelper.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String? email;

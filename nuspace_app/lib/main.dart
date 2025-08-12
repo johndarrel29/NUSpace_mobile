@@ -6,14 +6,15 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nuspace_app/constants.dart';
 import 'package:nuspace_app/firebase_options.dart';
-import 'package:nuspace_app/screens/checkemailscreen.dart';
-import 'package:nuspace_app/screens/emailverificationscreen.dart';
-import 'package:nuspace_app/screens/forgotpasswordscreen.dart';
-import 'package:nuspace_app/screens/homescreen.dart';
-import 'package:nuspace_app/screens/interestscreen.dart';
+import 'package:nuspace_app/screens/authentication/checkemailscreen.dart';
+import 'package:nuspace_app/screens/authentication/emailverificationscreen.dart';
+import 'package:nuspace_app/screens/authentication/forgotpasswordscreen.dart';
+import 'package:nuspace_app/screens/rso/homescreen.dart';
+import 'package:nuspace_app/screens/user/interestscreen.dart';
 import 'package:nuspace_app/screens/landing_screen.dart';
-import 'package:nuspace_app/screens/loginscreen.dart';
-import 'package:nuspace_app/screens/registerscreen.dart';
+import 'package:nuspace_app/screens/authentication/loginscreen.dart';
+import 'package:nuspace_app/screens/mainscreen.dart';
+import 'package:nuspace_app/screens/authentication/registerscreen.dart';
 import 'package:nuspace_app/services/connectivity_service.dart';
 import 'package:nuspace_app/services/notification_service.dart';
 import 'package:nuspace_app/widgets/snackbarhelper.dart';
@@ -73,6 +74,7 @@ class MainApp extends StatelessWidget {
             '/interestScreen': (context) => const InterestScreen(),
             '/homeScreen': (context) => const HomeScreen(),
             '/checkEmailScreen': (context) => const CheckEmailScreen(),
+            '/mainScreen': (context) => MainScreen(),
           },
           onGenerateRoute: (settings) {
             //routes that needs arguments

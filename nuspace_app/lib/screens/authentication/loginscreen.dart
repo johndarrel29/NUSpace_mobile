@@ -15,7 +15,7 @@ import 'package:nuspace_app/widgets/snackbarhelper.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
-import '../utils/internalserverdialog.dart';
+import '../../utils/internalserverdialog.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -116,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
             if (hasInterests) {
               await Navigator.of(
                 context,
-              ).pushNamedAndRemoveUntil('/homeScreen', (route) => false);
+              ).pushNamedAndRemoveUntil('/mainScreen', (route) => false);
             } else {
               await Navigator.of(
                 context,

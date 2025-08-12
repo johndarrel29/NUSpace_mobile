@@ -10,10 +10,10 @@ import 'package:http/http.dart' as http;
 import 'package:nuspace_app/widgets/customtextformfield.dart';
 import 'package:provider/provider.dart';
 
-import '../constants.dart';
-import '../services/connectivity_service.dart';
-import '../utils/internalserverdialog.dart';
-import '../widgets/snackbarhelper.dart';
+import '../../constants.dart';
+import '../../services/connectivity_service.dart';
+import '../../utils/internalserverdialog.dart';
+import '../../widgets/snackbarhelper.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   final String? email;

@@ -20,8 +20,6 @@ class CustomRSOListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool hasValidImage = imageUrl != null && imageUrl!.startsWith("https");
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -32,38 +30,28 @@ class CustomRSOListTile extends StatelessWidget {
           child: ListTile(
             leading: ClipRRect(
               borderRadius: BorderRadius.circular(30.r),
-              child:
-                  hasValidImage
-                      ? CachedNetworkImage(
-                        imageUrl: imageUrl!,
-                        width: 50.r,
-                        height: 50.r,
-                        fit: BoxFit.cover,
-                        placeholder:
-                            (context, url) => Container(
-                              width: 50.r,
-                              height: 50.r,
-                              color: Colors.grey[300],
-                              child: const Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              ),
-                            ),
-                        errorWidget:
-                            (context, url, error) => Container(
-                              width: 50.r,
-                              height: 50.r,
-                              color: Colors.grey[300],
-                              child: const Icon(Icons.error, color: Colors.red),
-                            ),
-                      )
-                      : Container(
-                        width: 50.r,
-                        height: 50.r,
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.image, color: Colors.white),
+              child: CachedNetworkImage(
+                imageUrl: imageUrl!,
+                width: 50.r,
+                height: 50.r,
+                fit: BoxFit.cover,
+                placeholder:
+                    (context, url) => Container(
+                      width: 50.r,
+                      height: 50.r,
+                      color: Colors.grey[300],
+                      child: const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
                       ),
+                    ),
+                errorWidget:
+                    (context, url, error) => Container(
+                      width: 50.r,
+                      height: 50.r,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.image, color: Colors.grey),
+                    ),
+              ),
             ),
             title: CustomFont(
               text: acronym ?? 'Undefined Name',

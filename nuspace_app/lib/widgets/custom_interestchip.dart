@@ -8,6 +8,7 @@ class InterestChip extends StatelessWidget {
   final bool isSelected;
   final bool isDisabled;
   final VoidCallback onTap;
+  final double fontSize;
 
   const InterestChip({
     super.key,
@@ -15,6 +16,7 @@ class InterestChip extends StatelessWidget {
     required this.isSelected,
     required this.onTap,
     this.isDisabled = false,
+    this.fontSize = 14,
   });
 
   @override
@@ -35,7 +37,7 @@ class InterestChip extends StatelessWidget {
             children: [
               CustomFont(
                 text: label,
-                fontSize: 14.r,
+                fontSize: fontSize.r,
                 color: isSelected ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w500,
               ),

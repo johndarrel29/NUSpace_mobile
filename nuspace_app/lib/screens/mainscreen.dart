@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nuspace_app/constants.dart';
+import 'package:nuspace_app/screens/activities/activityscreen.dart';
 import 'package:nuspace_app/screens/rso/homescreen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -14,7 +15,8 @@ class _MainScreenState extends State<MainScreen> {
 
   // Key to access HomeScreen state
   final GlobalKey<HomeScreenState> _homeKey = GlobalKey<HomeScreenState>();
-
+  final GlobalKey<ActivityScreenState> _activityKey =
+      GlobalKey<ActivityScreenState>();
   // Screens are nullable so we can lazy load them
   final List<Widget?> _screens = [null, null, null];
 
@@ -30,6 +32,9 @@ class _MainScreenState extends State<MainScreen> {
       //if tapped the same tab again
       if (index == 0 && _homeKey.currentState != null) {
         _homeKey.currentState!.refreshData();
+      }
+      if (index == 1 && _activityKey.currentState != null) {
+        _activityKey.currentState!.refreshData();
       }
     } else {
       setState(() {
@@ -48,7 +53,7 @@ class _MainScreenState extends State<MainScreen> {
       case 0:
         return HomeScreen(key: _homeKey);
       case 1:
-        return const Placeholder();
+        return ActivityScreen(key: _activityKey);
       case 2:
         return const Placeholder();
       default:
@@ -73,10 +78,13 @@ class _MainScreenState extends State<MainScreen> {
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined, color: nuBlue),
+            icon: Icon(Icons.home_outlined),
             label: "Home",
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.abc), label: "Page 2"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: "Activity",
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
       ),

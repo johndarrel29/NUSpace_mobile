@@ -114,8 +114,8 @@ class _LandingScreenState extends State<LandingScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: 110,
-                      width: 110,
+                      height: 110.r,
+                      width: 110.r,
                       child: Image.asset("assets/images/nuspace_whitelogo.png"),
                     ),
                     SizedBox(width: 10.w),
@@ -125,7 +125,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       children: [
                         CustomFont(
                           text: "NU",
-                          fontSize: 60,
+                          fontSize: 60.r,
                           fontFamily: 'ClanOT',
                           fontWeight: FontWeight.bold,
                           useGoogleFont: false,
@@ -133,7 +133,7 @@ class _LandingScreenState extends State<LandingScreen> {
                         ),
                         CustomFont(
                           text: "Space",
-                          fontSize: 60,
+                          fontSize: 60.r,
                           fontFamily: 'ClanOT',
                           fontWeight: FontWeight.bold,
                           useGoogleFont: false,
@@ -161,7 +161,7 @@ class _LandingScreenState extends State<LandingScreen> {
                 children: [
                   CustomButton(
                     text: "Log in",
-                    fontSize: 16,
+                    fontSize: 16.r,
                     fontweight: FontWeight.bold,
                     isLoading: _navigateLogin,
                     onPressed: _toLogin,
@@ -177,7 +177,7 @@ class _LandingScreenState extends State<LandingScreen> {
                   CustomButton(
                     text: "Sign up",
                     textColor: Colors.black,
-                    fontSize: 16,
+                    fontSize: 16.r,
                     fontweight: FontWeight.bold,
                     backgroundColor: Colors.white,
                     borderColor: Colors.grey,

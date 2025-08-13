@@ -6,10 +6,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nuspace_app/constants.dart';
 import 'package:nuspace_app/firebase_options.dart';
+import 'package:nuspace_app/screens/activities/activityscreen.dart';
+import 'package:nuspace_app/screens/activities/viewactivityscreen.dart';
 import 'package:nuspace_app/screens/authentication/checkemailscreen.dart';
 import 'package:nuspace_app/screens/authentication/emailverificationscreen.dart';
 import 'package:nuspace_app/screens/authentication/forgotpasswordscreen.dart';
 import 'package:nuspace_app/screens/rso/homescreen.dart';
+import 'package:nuspace_app/screens/rso/viewrsoscreeen.dart';
 import 'package:nuspace_app/screens/user/interestscreen.dart';
 import 'package:nuspace_app/screens/landing_screen.dart';
 import 'package:nuspace_app/screens/authentication/loginscreen.dart';
@@ -72,8 +75,9 @@ class MainApp extends StatelessWidget {
             '/loginScreen': (context) => const LoginScreen(),
             '/registerAccountScreen': (context) => const RegisterScreen(),
             '/interestScreen': (context) => const InterestScreen(),
-            '/homeScreen': (context) => const HomeScreen(),
             '/checkEmailScreen': (context) => const CheckEmailScreen(),
+            '/homeScreen': (context) => const HomeScreen(),
+            '/activityScreen': (context) => const ActivityScreen(),
             '/mainScreen': (context) => MainScreen(),
           },
           onGenerateRoute: (settings) {
@@ -90,6 +94,21 @@ class MainApp extends StatelessWidget {
                 return MaterialPageRoute(
                   builder: (_) => ForgotPasswordScreen(email: email),
                 );
+
+              case '/viewRSOScreen':
+                final args = settings.arguments as Map<String, dynamic>?;
+                final rsoId = args?['rsoId'] as String?;
+                return MaterialPageRoute(
+                  builder: (_) => ViewRSOScreen(rsoId: rsoId),
+                );
+
+              case '/viewActivityScreen':
+                final args = settings.arguments as Map<String, dynamic>?;
+                final activityID = args?['activityID'] as String?;
+                return MaterialPageRoute(
+                  builder: (_) => ViewActivityScreen(activityID: activityID),
+                );
+
               default:
                 return null;
             }

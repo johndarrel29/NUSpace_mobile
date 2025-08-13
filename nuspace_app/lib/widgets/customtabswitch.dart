@@ -6,6 +6,7 @@ import 'package:nuspace_app/widgets/customfont.dart';
 class CustomTabSwitch extends StatelessWidget {
   final List<String> tabs;
   final int selectedIndex;
+  final double fontSize;
   final ValueChanged<int> onTabSelected;
   final Color activeColor;
   final Color inactiveColor;
@@ -19,6 +20,7 @@ class CustomTabSwitch extends StatelessWidget {
     this.activeColor = nuBlue,
     this.inactiveColor = Colors.grey,
     this.indicatorColor = nuBlue,
+    this.fontSize = 16,
   });
 
   @override
@@ -49,7 +51,7 @@ class CustomTabSwitch extends StatelessWidget {
                   SizedBox(height: 8.h),
                   CustomFont(
                     text: tabs[index],
-                    fontSize: 16.r,
+                    fontSize: fontSize.r,
                     fontWeight: FontWeight.w600,
                     color: isActive ? activeColor : inactiveColor,
                   ),

@@ -332,10 +332,14 @@ class HomeScreenState extends State<HomeScreen> {
                                               explanation:
                                                   rso['explanation'] ?? '',
                                               rank: index + 1,
-                                              onTap:
-                                                  () => print(
-                                                    "Printing RSO id ${rso['rsoId']}",
-                                                  ),
+                                              onTap: () {
+                                                Navigator.of(context).pushNamed(
+                                                  '/viewRSOScreen',
+                                                  arguments: {
+                                                    'rsoId': rso['rsoId'],
+                                                  },
+                                                );
+                                              },
                                             ),
                                           );
                                         },
@@ -365,10 +369,14 @@ class HomeScreenState extends State<HomeScreen> {
                                               college: rso['college'] ?? '',
                                               category: rso['category'] ?? '',
                                               probationary: rso['probationary'],
-                                              onTap:
-                                                  () => print(
-                                                    "Print rso id: ${rso['rsoId']}",
-                                                  ),
+                                              onTap: () {
+                                                Navigator.of(context).pushNamed(
+                                                  '/viewRSOScreen',
+                                                  arguments: {
+                                                    'rsoId': rso['rsoId'],
+                                                  },
+                                                );
+                                              },
                                             );
                                           },
                                         ),
@@ -410,10 +418,14 @@ class HomeScreenState extends State<HomeScreen> {
                                             college: rso['college'] ?? '',
                                             category: rso['category'] ?? '',
                                             probationary: rso['probationary'],
-                                            onTap:
-                                                () => print(
-                                                  "Print rso id: ${rso['rsoId']}",
-                                                ),
+                                            onTap: () {
+                                              Navigator.of(context).pushNamed(
+                                                '/viewRSOScreen',
+                                                arguments: {
+                                                  'rsoId': rso['rsoId'],
+                                                },
+                                              );
+                                            },
                                           );
                                         },
                                       ),

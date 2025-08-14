@@ -115,9 +115,7 @@ class HomeScreenState extends State<HomeScreen> {
           "error code ${response.statusCode} and message ${responseData['message']}",
         );
         setState(() {
-          suggestedRSOs = List<Map<String, dynamic>>.from(
-            responseData['data'] ?? [],
-          );
+          suggestedRSOs = [];
         });
       }
     } on TimeoutException {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nuspace_app/constants.dart';
 import 'package:nuspace_app/screens/activities/activityscreen.dart';
 import 'package:nuspace_app/screens/rso/homescreen.dart';
+import 'package:nuspace_app/screens/user/profilescreen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -17,6 +18,8 @@ class _MainScreenState extends State<MainScreen> {
   final GlobalKey<HomeScreenState> _homeKey = GlobalKey<HomeScreenState>();
   final GlobalKey<ActivityScreenState> _activityKey =
       GlobalKey<ActivityScreenState>();
+  final GlobalKey<ProfileScreenState> _profileKey =
+      GlobalKey<ProfileScreenState>();
   // Screens are nullable so we can lazy load them
   final List<Widget?> _screens = [null, null, null];
 
@@ -35,6 +38,9 @@ class _MainScreenState extends State<MainScreen> {
       }
       if (index == 1 && _activityKey.currentState != null) {
         _activityKey.currentState!.refreshData();
+      }
+      if (index == 2 && _profileKey.currentState != null) {
+        _profileKey.currentState!.refreshData();
       }
     } else {
       setState(() {
@@ -55,7 +61,7 @@ class _MainScreenState extends State<MainScreen> {
       case 1:
         return ActivityScreen(key: _activityKey);
       case 2:
-        return const Placeholder();
+        return ProfileScreen(key: _profileKey);
       default:
         return const SizedBox();
     }

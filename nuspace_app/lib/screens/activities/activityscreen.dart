@@ -100,9 +100,7 @@ class ActivityScreenState extends State<ActivityScreen> {
         }
       } else {
         setState(() {
-          activities = List<Map<String, dynamic>>.from(
-            responseData['activities'] ?? [],
-          );
+          activities = [];
           _errormessage = responseData['message'];
         });
         print("error code ${response.statusCode} and message $_errormessage");

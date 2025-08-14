@@ -18,6 +18,7 @@ import 'package:nuspace_app/screens/landing_screen.dart';
 import 'package:nuspace_app/screens/authentication/loginscreen.dart';
 import 'package:nuspace_app/screens/mainscreen.dart';
 import 'package:nuspace_app/screens/authentication/registerscreen.dart';
+import 'package:nuspace_app/screens/user/profilescreen.dart';
 import 'package:nuspace_app/services/connectivity_service.dart';
 import 'package:nuspace_app/services/notification_service.dart';
 import 'package:nuspace_app/widgets/snackbarhelper.dart';
@@ -78,6 +79,7 @@ class MainApp extends StatelessWidget {
             '/checkEmailScreen': (context) => const CheckEmailScreen(),
             '/homeScreen': (context) => const HomeScreen(),
             '/activityScreen': (context) => const ActivityScreen(),
+            '/profileScreen': (context) => const ProfileScreen(),
             '/mainScreen': (context) => MainScreen(),
           },
           onGenerateRoute: (settings) {

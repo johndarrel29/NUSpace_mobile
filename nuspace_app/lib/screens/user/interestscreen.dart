@@ -121,6 +121,7 @@ class _InterestScreenState extends State<InterestScreen> {
           "error code ${response.statusCode} and message ${responseData['message']}",
         );
         setState(() {
+          allTags = [];
           _errormessage = responseData['message'];
         });
       }

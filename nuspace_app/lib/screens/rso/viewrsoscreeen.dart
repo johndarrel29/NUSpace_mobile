@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -88,7 +87,7 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
 
       final responseData = jsonDecode(response.body);
 
-      if (response.statusCode == 200 || responseData['success'] == true) {
+      if (response.statusCode == 200 && responseData['success'] == true) {
         if (mounted) {
           setState(() {
             rsoDetails = responseData['rsoDetails'];
@@ -393,9 +392,16 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
                                   date: dateString,
                                   description: activity["Activity_description"],
                                   publicity: activity['Activity_publicity'],
+                                  status: activity['Activity_date_status'],
                                   onTap: () {
                                     print(
                                       "Printing activity ID: ${activity["_id"]}",
+                                    );
+                                    Navigator.of(context).pushNamed(
+                                      '/viewActivityScreen',
+                                      arguments: {
+                                        'activityID': activity['_id'],
+                                      },
                                     );
                                   },
                                 );

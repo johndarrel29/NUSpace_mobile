@@ -12,6 +12,7 @@ import 'package:nuspace_app/screens/authentication/checkemailscreen.dart';
 import 'package:nuspace_app/screens/authentication/emailverificationscreen.dart';
 import 'package:nuspace_app/screens/authentication/forgotpasswordscreen.dart';
 import 'package:nuspace_app/screens/rso/homescreen.dart';
+import 'package:nuspace_app/screens/rso/rsoannouncementscreen.dart';
 import 'package:nuspace_app/screens/rso/viewrsoscreeen.dart';
 import 'package:nuspace_app/screens/user/interestscreen.dart';
 import 'package:nuspace_app/screens/landing_screen.dart';
@@ -109,6 +110,13 @@ class MainApp extends StatelessWidget {
                 final activityID = args?['activityID'] as String?;
                 return MaterialPageRoute(
                   builder: (_) => ViewActivityScreen(activityID: activityID),
+                );
+
+              case '/announcementScreen':
+                final args = settings.arguments as Map<String, dynamic>;
+                final rsoId = args['rsoId'] as String?;
+                return MaterialPageRoute(
+                  builder: (_) => RSOAnnouncementScreen(rsoId: rsoId),
                 );
 
               default:

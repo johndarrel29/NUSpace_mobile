@@ -181,8 +181,7 @@ class HomeScreenState extends State<HomeScreen> {
       print("Response data for joined RSOs: $responseData");
 
       if (response.statusCode == 200 && responseData['success'] == true) {
-        final user = responseData['user'] ?? {};
-        final membershipList = user['rso_membership'] ?? [];
+        final membershipList = responseData['joinedRSOs'];
 
         setState(() {
           joinedRSOs = List<Map<String, dynamic>>.from(membershipList);
@@ -409,16 +408,19 @@ class HomeScreenState extends State<HomeScreen> {
                                         itemCount: joinedRSOs.length,
                                         itemBuilder: (context, index) {
                                           final rso = joinedRSOs[index];
-                                          print("Printing other RSOs: $rso");
+                                          print("Printing joined RSOs: $rso");
                                           return CustomRSOListTile(
-                                            imageUrl: rso['logo'] ?? '',
+                                            imageUrl: rso['RSO_picture'] ?? '',
                                             acronym: rso['acronym'] ?? '',
                                             college: rso['college'] ?? '',
                                             category: rso['category'] ?? '',
-                                            probationary: rso['probationary'],
+                                            probationary: rso['probationary']!,
                                             onTap: () {
+                                              print(
+                                                "Going to announcement screen of RSO",
+                                              );
                                               Navigator.of(context).pushNamed(
-                                                '/viewRSOScreen',
+                                                '/announcementScreen',
                                                 arguments: {
                                                   'rsoId': rso['rsoId'],
                                                 },

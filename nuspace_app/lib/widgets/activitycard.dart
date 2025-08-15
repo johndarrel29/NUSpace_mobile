@@ -12,7 +12,8 @@ class ActivityCard extends StatelessWidget {
       activityName,
       activityImage,
       date,
-      description;
+      description,
+      status;
   final bool publicity;
   final VoidCallback onTap;
 
@@ -24,6 +25,7 @@ class ActivityCard extends StatelessWidget {
     required this.activityName,
     required this.activityImage,
     required this.date,
+    required this.status,
     required this.description,
     required this.publicity,
     required this.onTap,
@@ -46,7 +48,7 @@ class ActivityCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -74,27 +76,49 @@ class ActivityCard extends StatelessWidget {
                             child: Icon(
                               Icons.image,
                               color: Colors.grey,
-                              size: 100,
+                              size: 20.r,
                             ),
                           ),
                     ),
                   ),
                   SizedBox(width: 10.w),
                   //rso name and college
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomFont(
-                        text: rsoName,
-                        fontSize: 16.r,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      SizedBox(height: 8.h),
-                      CustomFont(text: college, fontSize: 14.r),
-                    ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomFont(
+                          text: rsoName,
+                          fontSize: 16.r,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        SizedBox(height: 5.h),
+                        CustomFont(text: college, fontSize: 14.r),
+                      ],
+                    ),
                   ),
 
                   //activity date status
+                  CustomFont(
+                    text:
+                        status == 'upcoming'
+                            ? 'Upcoming '
+                            : status == 'ongoing'
+                            ? 'Ongoing'
+                            : status == 'done'
+                            ? 'Done'
+                            : 'Unknown',
+                    fontSize: 14.r,
+                    color:
+                        status == 'upcoming'
+                            ? nuBlue
+                            : status == 'ongoing'
+                            ? Colors.red
+                            : status == 'done'
+                            ? Colors.green
+                            : Colors.black,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ],
               ),
             ),

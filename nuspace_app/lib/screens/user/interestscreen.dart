@@ -204,7 +204,9 @@ class _InterestScreenState extends State<InterestScreen> {
         );
 
         if (mounted) {
-          Navigator.of(context).pushReplacementNamed('/homeScreen');
+          Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil('/mainScreen', (route) => false);
         }
       } else {
         print("Error adding interests: ${responseData['message']}");

@@ -5,7 +5,7 @@ import 'package:nuspace_app/constants.dart';
 import 'package:nuspace_app/widgets/customfont.dart';
 
 class ViewRSOActivityCard extends StatelessWidget {
-  final String imageUrl, name, date, description;
+  final String imageUrl, name, date, description, status;
   final bool publicity;
   final VoidCallback onTap;
 
@@ -16,6 +16,7 @@ class ViewRSOActivityCard extends StatelessWidget {
     required this.date,
     required this.description,
     required this.publicity,
+    required this.status,
     required this.onTap,
   });
 
@@ -74,13 +75,39 @@ class ViewRSOActivityCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomFont(
-                    text:
-                        publicity == true
-                            ? "Open For All"
-                            : "Only For RSO Members",
-                    fontSize: 14.r,
-                    color: Colors.grey,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CustomFont(
+                        text:
+                            publicity == true
+                                ? "Open For All"
+                                : "Only For RSO Members",
+                        fontSize: 14.r,
+                        color: Colors.grey,
+                      ),
+                      //activity date status
+                      CustomFont(
+                        text:
+                            status == 'upcoming'
+                                ? 'Upcoming '
+                                : status == 'ongoing'
+                                ? 'Ongoing'
+                                : status == 'done'
+                                ? 'Done'
+                                : 'Unknown',
+                        fontSize: 14.r,
+                        color:
+                            status == 'upcoming'
+                                ? nuBlue
+                                : status == 'ongoing'
+                                ? Colors.red
+                                : status == 'done'
+                                ? Colors.green
+                                : Colors.black,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ],
                   ),
                   SizedBox(height: 5.h),
                   CustomFont(

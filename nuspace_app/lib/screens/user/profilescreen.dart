@@ -128,6 +128,87 @@ class ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _logout() async {
+    //check token..if no token, go back to landing screen
+    final token = await storage.read(key: "auth_token");
+    if (token == null) {
+      print("No auth token found, navigating to landing screen!");
+      if (mounted) {
+        Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
+        SnackbarHelper.showSnackbar(
+          "Token expired or not found",
+          backgroundColor: Colors.red,
+        );
+      }
+      return;
+    }
+
+    //check for internet connection
+    if (!connectivityService.isConnected) {
+      print("No Internet Connection");
+      SnackbarHelper.showConnectivityStatus(false);
+      return;
+    }
+
+    try {
+      await storage.delete(key: "auth_token");
+      if (mounted) {
+        Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
+      }
+    } on TimeoutException {
+      // Handle Timeout (Server Down)
+      print("Server Timeout! Navigating to Internal Server Error screen.");
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => const InternalServerDialog(),
+        );
+      }
+    } catch (e, stackTrace) {
+      debugPrint("Logout error: $e\n$stackTrace");
+      if (mounted) {
+        SnackbarHelper.showSnackbar(
+          "Logout failed. Please try again.",
+          backgroundColor: Colors.red,
+        );
+      }
+    }
+  }
+
+  Future<void> _goToInterestScreen() async {
+    //check token..if no token, go back to landing screen
+    final token = await storage.read(key: "auth_token");
+    if (token == null) {
+      print("No auth token found, navigating to landing screen!");
+      if (mounted) {
+        Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
+        SnackbarHelper.showSnackbar(
+          "Token expired or not found",
+          backgroundColor: Colors.red,
+        );
+      }
+      return;
+    }
+
+    //check for internet connection
+    if (!connectivityService.isConnected) {
+      print("No Internet Connection");
+      SnackbarHelper.showConnectivityStatus(false);
+      return;
+    }
+
+    if (mounted) {
+      Navigator.of(context).pushNamed('/interestScreen');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -162,7 +243,7 @@ class ProfileScreenState extends State<ProfileScreen> {
           Padding(
             padding: EdgeInsets.only(right: 6.w),
             child: IconButton(
-              onPressed: () {},
+              onPressed: _logout,
               icon: Icon(Icons.logout, size: 24.r),
               color: nuBlue,
             ),
@@ -208,7 +289,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                             fontSize: 18.r,
                             fontWeight: FontWeight.bold,
                           ),
-                          SizedBox(height: 30.h),
+                          SizedBox(height: 40.h),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -238,30 +319,6 @@ class ProfileScreenState extends State<ProfileScreen> {
                             fontSize: 14.r,
                           ),
                           SizedBox(height: 15.h),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  print("Going to edit profile screen");
-                                },
-                                child: Container(
-                                  height: 30.h,
-                                  width: 100.w,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(10.r),
-                                  ),
-                                  child: Center(
-                                    child: CustomFont(
-                                      text: "Edit Profile",
-                                      fontSize: 14.r,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
                         ],
                       ),
                     ),
@@ -273,7 +330,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                     ),
                     //lower half
                     Expanded(
-                      flex: 4,
+                      flex: 5,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -290,6 +347,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                               ),
                               InkWell(
                                 onTap: () {
+                                  _goToInterestScreen();
                                   print("Going to interests screen");
                                 },
                                 child: Padding(

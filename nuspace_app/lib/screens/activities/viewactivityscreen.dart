@@ -250,54 +250,95 @@ class _ViewActivityScreenState extends State<ViewActivityScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ListTile(
-                        leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(30.r),
-                          child: CachedNetworkImage(
-                            imageUrl:
-                                activityDetails?['RSO_id']['RSO_picture'] ?? '',
-                            width: 50.r,
-                            height: 50.r,
-                            fit: BoxFit.cover,
-                            placeholder:
-                                (context, url) => Container(
-                                  width: 50.r,
-                                  height: 50.r,
-                                  color: Colors.grey[300],
-                                  child: const Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          //RSO profile picture
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(30.r),
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  activityDetails?['RSO_id']['RSO_picture'] ??
+                                  '',
+                              width: 50.r,
+                              height: 50.r,
+                              fit: BoxFit.cover,
+                              placeholder:
+                                  (context, url) => Container(
+                                    width: 50.r,
+                                    height: 50.r,
+                                    color: Colors.grey[300],
+                                    child: const Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
                                     ),
                                   ),
-                                ),
-                            errorWidget:
-                                (context, url, error) => Container(
-                                  width: 50.r,
-                                  height: 50.r,
-                                  color: Colors.grey[300],
-                                  child: const Icon(
-                                    Icons.image,
-                                    color: Colors.grey,
+                              errorWidget:
+                                  (context, url, error) => Container(
+                                    width: 50.r,
+                                    height: 50.r,
+                                    color: Colors.grey[300],
+                                    child: const Icon(
+                                      Icons.image,
+                                      color: Colors.grey,
+                                    ),
                                   ),
+                            ),
+                          ),
+                          SizedBox(width: 12.w),
+
+                          //RSO acronym and name
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomFont(
+                                  text:
+                                      activityDetails?['RSO_id']['RSO_acronym'] ??
+                                      "RSO Acronym",
+                                  fontSize: 16.r,
+                                  fontWeight: FontWeight.w600,
                                 ),
+                                SizedBox(height: 5.h),
+                                CustomFont(
+                                  text:
+                                      activityDetails?['RSO_id']['RSO_name'] ??
+                                      "RSO Name",
+                                  fontSize: 14.r,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        title: CustomFont(
-                          text:
-                              activityDetails?['RSO_id']['RSO_acronym'] ??
-                              "RSO Acronym",
-                          fontSize: 16.r,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        subtitle: Padding(
-                          padding: EdgeInsets.only(top: 5.h),
-                          child: CustomFont(
+
+                          //activity status
+                          CustomFont(
                             text:
-                                activityDetails?['RSO_id']['RSO_name'] ??
-                                "RSO Name",
+                                activityDetails?['Activity_date_status'] ==
+                                        'upcoming'
+                                    ? 'Upcoming '
+                                    : activityDetails?['Activity_date_status'] ==
+                                        'ongoing'
+                                    ? 'Ongoing'
+                                    : activityDetails?['Activity_date_status'] ==
+                                        'done'
+                                    ? 'Done'
+                                    : 'Unknown',
                             fontSize: 14.r,
+                            color:
+                                activityDetails?['Activity_date_status'] ==
+                                        'upcoming'
+                                    ? nuBlue
+                                    : activityDetails?['Activity_date_status'] ==
+                                        'ongoing'
+                                    ? Colors.red
+                                    : activityDetails?['Activity_date_status'] ==
+                                        'done'
+                                    ? Colors.green
+                                    : Colors.black,
+                            fontWeight: FontWeight.w600,
                           ),
-                        ),
+                        ],
                       ),
 
                       SizedBox(height: 10.h),
@@ -465,14 +506,21 @@ class _ViewActivityScreenState extends State<ViewActivityScreen> {
                               fontSize: 14.r,
                             ),
                             SizedBox(height: 20.h),
-                            CustomButton(
-                              text: "Join Activity",
-                              fontSize: 14.r,
-                              fontweight: FontWeight.bold,
-                              onPressed: () {
-                                print("Joining Activity");
-                              },
-                            ),
+                            //lilitaw lng to kapag upcoming lng yung activity
+                            //pero kapag tapos na and on going na ..dont
+                            if (activityDetails?['Activity_date_status'] ==
+                                    'upcoming' ||
+                                activityDetails?['Activity_date_status'] ==
+                                    'ongoing')
+                              CustomButton(
+                                text: "Join Activity",
+                                height: 40.h,
+                                fontSize: 14.r,
+                                fontweight: FontWeight.bold,
+                                onPressed: () {
+                                  print("Joining Activity");
+                                },
+                              ),
                             SizedBox(height: 50.h),
                           ],
                         ),

@@ -7,7 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mime/mime.dart';
 import 'package:nuspace_app/config/config.dart';
-import 'package:nuspace_app/widgets/customform.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -16,21 +15,27 @@ import '../../constants.dart';
 import '../../services/connectivity_service.dart';
 import '../../utils/internalserverdialog.dart';
 import '../../widgets/customfont.dart';
+import '../../widgets/customform.dart';
 import '../../widgets/snackbarhelper.dart';
 
-class RSOMembershipForms extends StatefulWidget {
-  final String? rsoId;
-  const RSOMembershipForms({super.key, required this.rsoId});
+class ActivityForms extends StatefulWidget {
+  final String? activityId;
+  final String? formType;
+  const ActivityForms({
+    super.key,
+    required this.activityId,
+    required this.formType,
+  });
 
   @override
-  State<RSOMembershipForms> createState() => _RSOMembershipFormsState();
+  State<ActivityForms> createState() => _ActivityFormsState();
 }
 
-class _RSOMembershipFormsState extends State<RSOMembershipForms> {
+class _ActivityFormsState extends State<ActivityForms> {
   final storage = FlutterSecureStorage();
-  Map<String, dynamic> membershipForm = {};
+  Map<String, dynamic> activityForm = {};
   bool _isLoading = true;
-  String? formId, rsoYearlyDataID;
+  String? formId, activityId;
   bool? alreadySubmitted;
 
   late ConnectivityService connectivityService;
@@ -42,12 +47,13 @@ class _RSOMembershipFormsState extends State<RSOMembershipForms> {
       context,
       listen: false,
     );
-    _fetchMembershipForms();
+    _fetchActivityForms();
   }
 
-  Future<void> _fetchMembershipForms() async {
-    print("View RSO Screen rsoId: ${widget.rsoId}");
-    //check token..if no token, go back to landing screen
+  Future<void> _fetchActivityForms() async {
+    print(
+      "Printing activityId ${widget.activityId} and formtype: ${widget.formType}",
+    );
     final token = await storage.read(key: "auth_token");
     if (token == null) {
       print("No auth token found, navigating to landing screen!");
@@ -74,7 +80,7 @@ class _RSOMembershipFormsState extends State<RSOMembershipForms> {
       final response = await http
           .get(
             Uri.parse(
-              '${AppConfig.baseUrl}/api/student/forms/fetch-membership-forms/${widget.rsoId}',
+              '${AppConfig.baseUrl}/api/student/forms/fetch-activity-forms/${widget.activityId}?formType=${widget.formType}',
             ),
             headers: {
               'Content-Type': 'application/json',
@@ -84,32 +90,33 @@ class _RSOMembershipFormsState extends State<RSOMembershipForms> {
           .timeout(Duration(seconds: 20));
 
       final responseData = jsonDecode(response.body);
-      print("printing raw response: $responseData");
+
+      print("Printing raw response data: $responseData");
+
       if (response.statusCode == 200 && responseData['success'] == true) {
         final form = responseData['form'] ?? {};
-        final rsoData = responseData['rsoData'] ?? {};
 
         if (mounted) {
           setState(() {
-            membershipForm = form;
-            formId = form['_id'];
-            rsoYearlyDataID = rsoData['_id'];
+            activityForm = form;
             _isLoading = false;
+            formId = form['_id'];
+            activityId = widget.activityId;
             alreadySubmitted = responseData['alreadySubmitted'];
           });
         }
-        print("already submitted: $alreadySubmitted");
-        print("Printing membership form: $membershipForm");
-        print("Form ID: $formId");
-        print("RSO Yearly Data ID: $rsoYearlyDataID");
+
+        print("Already submitted: $alreadySubmitted");
+        print("Printing activity form: $activityForm");
+        print("form id: $formId");
       } else {
         print(
           "Error code ${response.statusCode} and message ${responseData['message']}",
         );
         setState(() {
-          membershipForm = {};
+          activityForm = {};
         });
-        print("Printing rso details failed: $membershipForm");
+        print("Printing rso details failed: $activityForm");
       }
     } on TimeoutException {
       // Handle Timeout (Server Down)
@@ -136,7 +143,7 @@ class _RSOMembershipFormsState extends State<RSOMembershipForms> {
   }
 
   Future<void> _submitResponse(Map<String, dynamic> answers) async {
-    print("View RSO Screen rsoId: ${widget.rsoId}");
+    print("ActivityID: ${widget.activityId}");
     //check token..if no token, go back to landing screen
     final token = await storage.read(key: "auth_token");
     if (token == null) {
@@ -160,7 +167,7 @@ class _RSOMembershipFormsState extends State<RSOMembershipForms> {
       return;
     }
 
-    if (formId == null || rsoYearlyDataID == null) {
+    if (formId == null || activityId == null) {
       SnackbarHelper.showSnackbar(
         "Form data missing. Please refresh and try again.",
         backgroundColor: Colors.red,
@@ -170,7 +177,7 @@ class _RSOMembershipFormsState extends State<RSOMembershipForms> {
 
     try {
       final uri = Uri.parse(
-        "${AppConfig.baseUrl}/api/student/forms/membership-forms/submit",
+        "${AppConfig.baseUrl}/api/student/forms/activity-forms/submit",
       );
       final request = http.MultipartRequest('POST', uri);
 
@@ -178,7 +185,7 @@ class _RSOMembershipFormsState extends State<RSOMembershipForms> {
 
       // Attach non-file fields
       request.fields['formId'] = formId!;
-      request.fields['rsoYearlyDataID'] = rsoYearlyDataID!;
+      request.fields['activityId'] = activityId!;
 
       // Traverse nested answers to attach files
       for (final page in answers['pages']) {
@@ -296,7 +303,7 @@ class _RSOMembershipFormsState extends State<RSOMembershipForms> {
               ? Center(
                 child: CircularProgressIndicator(color: nuBlue, strokeAlign: 5),
               )
-              : membershipForm.isEmpty
+              : activityForm.isEmpty
               ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -345,7 +352,7 @@ class _RSOMembershipFormsState extends State<RSOMembershipForms> {
                 ),
               )
               : CustomForm(
-                formJSON: membershipForm,
+                formJSON: activityForm,
                 onSubmit: (responses) {
                   print("Raw response: $responses");
                   _submitResponse(responses);

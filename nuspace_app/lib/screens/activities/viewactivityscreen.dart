@@ -29,6 +29,7 @@ class _ViewActivityScreenState extends State<ViewActivityScreen> {
   final storage = FlutterSecureStorage();
   Map<String, dynamic>? activityDetails;
   bool _isLoading = true;
+  bool? didParticipate;
 
   late ConnectivityService connectivityService;
 
@@ -319,7 +320,7 @@ class _ViewActivityScreenState extends State<ViewActivityScreen> {
                                     ? 'Upcoming '
                                     : activityDetails?['Activity_date_status'] ==
                                         'ongoing'
-                                    ? 'Ongoing'
+                                    ? 'On Going'
                                     : activityDetails?['Activity_date_status'] ==
                                         'done'
                                     ? 'Done'
@@ -509,18 +510,41 @@ class _ViewActivityScreenState extends State<ViewActivityScreen> {
                             //lilitaw lng to kapag upcoming lng yung activity
                             //pero kapag tapos na and on going na ..dont
                             if (activityDetails?['Activity_date_status'] ==
-                                    'upcoming' ||
-                                activityDetails?['Activity_date_status'] ==
-                                    'ongoing')
+                                'upcoming') ...[
                               CustomButton(
                                 text: "Join Activity",
                                 height: 40.h,
                                 fontSize: 14.r,
                                 fontweight: FontWeight.bold,
                                 onPressed: () {
-                                  print("Joining Activity");
+                                  Navigator.of(context).pushNamed(
+                                    '/activityForms',
+                                    arguments: {
+                                      'activityId': activityDetails?['_id'],
+                                      'formType': 'pre-activity',
+                                    },
+                                  );
                                 },
                               ),
+                            ] else if (activityDetails?['Activity_date_status'] ==
+                                'done') ...[
+                              CustomButton(
+                                text: "Activity Feedback",
+                                height: 40.h,
+                                fontSize: 14.r,
+                                fontweight: FontWeight.bold,
+                                onPressed: () {
+                                  Navigator.of(context).pushNamed(
+                                    '/activityForms',
+                                    arguments: {
+                                      'activityId': activityDetails?['_id'],
+                                      'formType': 'post-activity',
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
+
                             SizedBox(height: 50.h),
                           ],
                         ),

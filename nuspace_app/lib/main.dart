@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nuspace_app/constants.dart';
 import 'package:nuspace_app/firebase_options.dart';
+import 'package:nuspace_app/screens/activities/activity_forms.dart';
 import 'package:nuspace_app/screens/activities/activityscreen.dart';
 import 'package:nuspace_app/screens/activities/viewactivityscreen.dart';
 import 'package:nuspace_app/screens/authentication/checkemailscreen.dart';
@@ -125,6 +126,18 @@ class MainApp extends StatelessWidget {
                 final rsoId = args['rsoId'] as String?;
                 return MaterialPageRoute(
                   builder: (_) => RSOMembershipForms(rsoId: rsoId),
+                );
+
+              case '/activityForms':
+                final args = settings.arguments as Map<String, dynamic>;
+                final activityId = args['activityId'] as String?;
+                final formType = args['formType'] as String?;
+                return MaterialPageRoute(
+                  builder:
+                      (_) => ActivityForms(
+                        activityId: activityId,
+                        formType: formType,
+                      ),
                 );
 
               default:

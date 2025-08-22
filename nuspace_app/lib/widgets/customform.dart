@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nuspace_app/constants.dart';
 import 'package:nuspace_app/utils/image_utils.dart';
 import 'package:nuspace_app/widgets/customfont.dart';
@@ -173,20 +174,31 @@ class _CustomFormState extends State<CustomForm> {
           children: [
             Row(
               children: [
-                CustomFont(
-                  text: title,
-                  fontSize: 16.r,
-                  fontWeight: FontWeight.w500,
-                ),
-                if (isRequired) ...[
-                  SizedBox(width: 5.w),
-                  CustomFont(
-                    text: "*",
-                    fontSize: 16.r,
-                    color: Colors.red,
-                    fontWeight: FontWeight.w600,
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: title,
+                          style: GoogleFonts.inter(
+                            fontSize: 16.r,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
+                        ),
+                        if (isRequired)
+                          TextSpan(
+                            text: " *",
+                            style: GoogleFonts.inter(
+                              fontSize: 16.r,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.red,
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                ],
+                ),
               ],
             ),
             SizedBox(height: 10.h),
@@ -234,20 +246,31 @@ class _CustomFormState extends State<CustomForm> {
           children: [
             Row(
               children: [
-                CustomFont(
-                  text: title,
-                  fontSize: 16.r,
-                  fontWeight: FontWeight.w500,
-                ),
-                if (isRequired) ...[
-                  SizedBox(width: 5.w),
-                  CustomFont(
-                    text: "*",
-                    fontSize: 16.r,
-                    color: Colors.red,
-                    fontWeight: FontWeight.w600,
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: title,
+                          style: GoogleFonts.inter(
+                            fontSize: 16.r,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
+                        ),
+                        if (isRequired)
+                          TextSpan(
+                            text: " *",
+                            style: GoogleFonts.inter(
+                              fontSize: 16.r,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.red,
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                ],
+                ),
               ],
             ),
             SizedBox(height: 10.h),
@@ -305,20 +328,31 @@ class _CustomFormState extends State<CustomForm> {
               children: [
                 Row(
                   children: [
-                    CustomFont(
-                      text: title,
-                      fontSize: 16.r,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    if (isRequired) ...[
-                      SizedBox(width: 5.w),
-                      CustomFont(
-                        text: "*",
-                        fontSize: 16.r,
-                        color: Colors.red,
-                        fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: title,
+                              style: GoogleFonts.inter(
+                                fontSize: 16.r,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                            if (isRequired)
+                              TextSpan(
+                                text: " *",
+                                style: GoogleFonts.inter(
+                                  fontSize: 16.r,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.red,
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
-                    ],
+                    ),
                   ],
                 ),
                 SizedBox(height: 5.h),
@@ -383,20 +417,31 @@ class _CustomFormState extends State<CustomForm> {
                 children: [
                   Row(
                     children: [
-                      CustomFont(
-                        text: title,
-                        fontSize: 16.r,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      if (isRequired) ...[
-                        SizedBox(width: 5.w),
-                        CustomFont(
-                          text: "*",
-                          fontSize: 16.r,
-                          color: Colors.red,
-                          fontWeight: FontWeight.w600,
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: title,
+                                style: GoogleFonts.inter(
+                                  fontSize: 16.r,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              if (isRequired)
+                                TextSpan(
+                                  text: " *",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 16.r,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
-                      ],
+                      ),
                     ],
                   ),
                   SizedBox(height: 10.h),
@@ -517,20 +562,31 @@ class _CustomFormState extends State<CustomForm> {
               children: [
                 Row(
                   children: [
-                    CustomFont(
-                      text: title,
-                      fontSize: 16.r,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    if (isRequired) ...[
-                      SizedBox(width: 5.w),
-                      CustomFont(
-                        text: "*",
-                        fontSize: 16.r,
-                        color: Colors.red,
-                        fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: title,
+                              style: GoogleFonts.inter(
+                                fontSize: 16.r,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                            if (isRequired)
+                              TextSpan(
+                                text: " *",
+                                style: GoogleFonts.inter(
+                                  fontSize: 16.r,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.red,
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
-                    ],
+                    ),
                   ],
                 ),
                 SizedBox(height: 10.h),
@@ -587,20 +643,31 @@ class _CustomFormState extends State<CustomForm> {
           children: [
             Row(
               children: [
-                CustomFont(
-                  text: title,
-                  fontSize: 16.r,
-                  fontWeight: FontWeight.w500,
-                ),
-                if (isRequired) ...[
-                  SizedBox(width: 5.w),
-                  CustomFont(
-                    text: "*",
-                    fontSize: 16.r,
-                    color: Colors.red,
-                    fontWeight: FontWeight.w600,
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: title,
+                          style: GoogleFonts.inter(
+                            fontSize: 16.r,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
+                        ),
+                        if (isRequired)
+                          TextSpan(
+                            text: " *",
+                            style: GoogleFonts.inter(
+                              fontSize: 16.r,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.red,
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                ],
+                ),
               ],
             ),
             SizedBox(height: 10.h),
@@ -677,20 +744,31 @@ class _CustomFormState extends State<CustomForm> {
               children: [
                 Row(
                   children: [
-                    CustomFont(
-                      text: title,
-                      fontSize: 16.r,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    if (isRequired) ...[
-                      SizedBox(width: 5.w),
-                      CustomFont(
-                        text: "*",
-                        fontSize: 16.r,
-                        color: Colors.red,
-                        fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: title,
+                              style: GoogleFonts.inter(
+                                fontSize: 16.r,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                            if (isRequired)
+                              TextSpan(
+                                text: " *",
+                                style: GoogleFonts.inter(
+                                  fontSize: 16.r,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.red,
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
-                    ],
+                    ),
                   ],
                 ),
                 SizedBox(height: 10.h),
@@ -767,20 +845,31 @@ class _CustomFormState extends State<CustomForm> {
               children: [
                 Row(
                   children: [
-                    CustomFont(
-                      text: title,
-                      fontSize: 16.r,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    if (isRequired) ...[
-                      SizedBox(width: 5.w),
-                      CustomFont(
-                        text: "*",
-                        fontSize: 16.r,
-                        color: Colors.red,
-                        fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: title,
+                              style: GoogleFonts.inter(
+                                fontSize: 16.r,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                            if (isRequired)
+                              TextSpan(
+                                text: " *",
+                                style: GoogleFonts.inter(
+                                  fontSize: 16.r,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.red,
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
-                    ],
+                    ),
                   ],
                 ),
                 SizedBox(height: 10.h),

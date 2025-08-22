@@ -172,7 +172,7 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
               ? Center(
                 child: CircularProgressIndicator(color: nuBlue, strokeAlign: 5),
               )
-              : _announcements == null
+              : _announcements.isEmpty
               ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

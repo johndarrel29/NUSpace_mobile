@@ -34,6 +34,7 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
   Map<String, dynamic>? rsoDetails;
   int _selectedIndex = 0;
   bool _isLoading = true;
+  bool isCurrentMember = false;
 
   late ConnectivityService connectivityService;
 
@@ -91,10 +92,12 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
         if (mounted) {
           setState(() {
             rsoDetails = responseData['rsoDetails'];
+            isCurrentMember = responseData['isCurrentUserMember'];
             _isLoading = false;
           });
         }
         print("Printing rso details success: $rsoDetails");
+        print("Is current member: $isCurrentMember");
       } else {
         print(
           "Error code ${response.statusCode} and message ${responseData['message']}",
@@ -320,6 +323,15 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
                                     ),
                                     SizedBox(height: 10.h),
 
+                                    if (rsoDetails?['RSO_Officers'].isEmpty)
+                                      Center(
+                                        child: CustomFont(
+                                          text: "No Officers Yet",
+                                          fontSize: 16.r,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
                                     Wrap(
                                       spacing: 12.w,
                                       runSpacing: 12.h,
@@ -351,12 +363,14 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
 
                         if (_selectedIndex == 1) ...[
                           if (rsoDetails?['RSO_activities'].isEmpty)
-                            Center(
-                              child: CustomFont(
-                                text: "No Activities Available in this RSO",
-                                fontSize: 16.r,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey,
+                            Expanded(
+                              child: Center(
+                                child: CustomFont(
+                                  text: "No Activities Available in this RSO",
+                                  fontSize: 16.r,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ),
                           Expanded(
@@ -412,7 +426,8 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
                       ],
                     ),
                   ),
-                  if (rsoDetails?['RSO_membershipStatus'] == true) ...[
+                  if (rsoDetails?['RSO_membershipStatus'] == true &&
+                      isCurrentMember == false) ...[
                     Positioned(
                       bottom: 30.h,
                       left: 20.w,
@@ -425,6 +440,10 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
                           fontweight: FontWeight.bold,
                           onPressed: () {
                             print("Registering membership");
+                            Navigator.of(context).pushNamed(
+                              '/membershipForms',
+                              arguments: {'rsoId': widget.rsoId},
+                            );
                           },
                         ),
                       ),

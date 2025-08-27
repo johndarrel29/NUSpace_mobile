@@ -96,6 +96,9 @@ class _LoginScreenState extends State<LoginScreen> {
             "Printing user $userData and printing email only ${userData['email']}",
           );
 
+          String userId = userData['id'];
+          await storage.write(key: "user_id", value: userId);
+
           //send fcm device token to backend to be saved
           NotificationService.getAndPrintFCMToken(
             userId: userData['id'],

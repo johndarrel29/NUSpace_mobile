@@ -300,7 +300,9 @@ class ActivityScreenState extends State<ActivityScreen> {
           Padding(
             padding: EdgeInsets.only(right: 6.w),
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushNamed('/notificationScreen');
+              },
               icon: Icon(Icons.notifications, size: 24.r),
               color: nuBlue,
             ),

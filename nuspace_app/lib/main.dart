@@ -12,6 +12,7 @@ import 'package:nuspace_app/screens/activities/viewactivityscreen.dart';
 import 'package:nuspace_app/screens/authentication/checkemailscreen.dart';
 import 'package:nuspace_app/screens/authentication/emailverificationscreen.dart';
 import 'package:nuspace_app/screens/authentication/forgotpasswordscreen.dart';
+import 'package:nuspace_app/screens/notification_screen.dart';
 import 'package:nuspace_app/screens/rso/homescreen.dart';
 import 'package:nuspace_app/screens/rso/rsoannouncementscreen.dart';
 import 'package:nuspace_app/screens/rso/rsomembershipforms.dart';
@@ -32,6 +33,8 @@ void main() async {
   await dotenv.load(fileName: ".env");
   setPreferredOrientations();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await NotificationService.initLocalNotifications();
 
   FirebaseMessaging.onBackgroundMessage(
     NotificationService.firebaseBackgroundHandler,
@@ -84,6 +87,7 @@ class MainApp extends StatelessWidget {
             '/activityScreen': (context) => const ActivityScreen(),
             '/profileScreen': (context) => const ProfileScreen(),
             '/mainScreen': (context) => MainScreen(),
+            '/notificationScreen': (context) => NotificationScreen(),
           },
           onGenerateRoute: (settings) {
             //routes that needs arguments

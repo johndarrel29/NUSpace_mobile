@@ -4,7 +4,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 import 'package:nuspace_app/config/config.dart';
+import 'package:nuspace_app/widgets/customtabswitch.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,6 +15,7 @@ import '../../services/connectivity_service.dart';
 import '../../utils/internalserverdialog.dart';
 import '../../widgets/customfont.dart';
 import '../../widgets/snackbarhelper.dart';
+import '../../widgets/viewrso_activitycard.dart';
 
 class RSOAnnouncementScreen extends StatefulWidget {
   final String? rsoId;
@@ -25,8 +28,10 @@ class RSOAnnouncementScreen extends StatefulWidget {
 class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
   final storage = FlutterSecureStorage();
   Map<String, dynamic>? announcementResponse;
+  Map<String, dynamic>? rsoDetails;
   List<dynamic> _announcements = [];
   bool _isLoading = true;
+  int _selectedIndex = 0;
 
   late ConnectivityService connectivityService;
 
@@ -38,6 +43,7 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
       listen: false,
     );
     _fetchAnnouncements();
+    _fetchRSODetails();
   }
 
   Future<void> _fetchAnnouncements() async {
@@ -79,12 +85,12 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
           .timeout(Duration(seconds: 20));
 
       final responseData = jsonDecode(response.body);
-
+      print("response data: $responseData");
       if (response.statusCode == 200 && responseData['success'] == true) {
         if (mounted) {
           setState(() {
-            final data = responseData['announcement'];
-            final List<dynamic> announcementList = data['announcement'] ?? [];
+            final List<dynamic> announcementList =
+                responseData['sortedAnnouncements'] ?? [];
             _isLoading = false;
             _announcements = announcementList;
           });
@@ -97,6 +103,87 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
         setState(() {
           _announcements = [];
         });
+      }
+    } on TimeoutException {
+      // Handle Timeout (Server Down)
+      print("Server Timeout! Navigating to Internal Server Error screen.");
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => const InternalServerDialog(),
+        );
+      }
+    } catch (e, stackTrace) {
+      SnackbarHelper.showSnackbar(
+        "An error occurred. Please try again.",
+        backgroundColor: Colors.red,
+      );
+      print("Error in login $e");
+      print("stacktrace: $stackTrace");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _fetchRSODetails() async {
+    print("View RSO Screen rsoId: ${widget.rsoId}");
+    //check token..if no token, go back to landing screen
+    final token = await storage.read(key: "auth_token");
+    if (token == null) {
+      print("No auth token found, navigating to landing screen!");
+      if (mounted) {
+        Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
+        SnackbarHelper.showSnackbar(
+          "Token expired or not found",
+          backgroundColor: Colors.red,
+        );
+      }
+      return;
+    }
+
+    //check for internet connection
+    if (!connectivityService.isConnected) {
+      print("No Internet Connection");
+      SnackbarHelper.showConnectivityStatus(false);
+      return;
+    }
+
+    try {
+      final response = await http
+          .get(
+            Uri.parse(
+              '${AppConfig.baseUrl}/api/student/rso/viewRSO/${widget.rsoId}',
+            ),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': token,
+            },
+          )
+          .timeout(Duration(seconds: 20));
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && responseData['success'] == true) {
+        if (mounted) {
+          setState(() {
+            rsoDetails = responseData['rsoDetails'];
+            _isLoading = false;
+          });
+        }
+        print("Printing rso details success: $rsoDetails");
+      } else {
+        print(
+          "Error code ${response.statusCode} and message ${responseData['message']}",
+        );
+        setState(() {
+          rsoDetails = null;
+        });
+        print("Printing rso details failed: $rsoDetails");
       }
     } on TimeoutException {
       // Handle Timeout (Server Down)
@@ -192,69 +279,143 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
                   ],
                 ),
               )
-              : ListView.builder(
-                itemCount: _announcements.length,
-                itemBuilder: (context, index) {
-                  final announcement = _announcements[index];
-
-                  String formattedDate = '';
-                  final dateStr = announcement['createdAt'] ?? '';
-                  final parsed = DateTime.tryParse(dateStr);
-                  if (parsed != null) {
-                    final local = parsed.toLocal();
-
-                    final datePart =
-                        "${local.year}-${local.month.toString().padLeft(2, '0')}-${local.day.toString().padLeft(2, '0')}";
-
-                    final hour = local.hour % 12 == 0 ? 12 : local.hour % 12;
-                    final minute = local.minute.toString().padLeft(2, '0');
-                    final second = local.second.toString().padLeft(2, '0');
-                    final period = local.hour >= 12 ? "PM" : "AM";
-
-                    final timePart = "$hour:$minute:$second $period";
-
-                    formattedDate = "$datePart | $timePart";
-                  }
-
-                  return Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 10.h,
-                    ),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          //date
-                          CustomFont(
-                            text: formattedDate,
-                            fontSize: 14.r,
-                            color: Colors.grey.shade700,
-                          ),
-                          SizedBox(height: 8.h),
-
-                          //title
-                          CustomFont(
-                            text: announcement['title'] ?? '',
-                            fontSize: 20.r,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          SizedBox(height: 10.h),
-
-                          //content
-                          CustomFont(
-                            text: announcement['content'] ?? '',
-                            fontSize: 16.r,
-                            textAlign: TextAlign.justify,
-                          ),
-                          SizedBox(height: 12.h),
-                          Divider(thickness: 1, color: Colors.grey.shade400),
-                        ],
+              : Column(
+                children: [
+                  CustomTabSwitch(
+                    tabs: ['Announcements', 'Activities'],
+                    selectedIndex: _selectedIndex,
+                    onTabSelected: (value) {
+                      setState(() {
+                        _selectedIndex = value;
+                      });
+                    },
+                  ),
+                  if (_selectedIndex == 0) ...[
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 10.h,
+                        ),
+                        child: _buildAnnouncements(),
                       ),
                     ),
-                  );
-                },
+                  ] else
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 15.w,
+                          vertical: 10.h,
+                        ),
+                        child: _rsoActivities(),
+                      ),
+                    ),
+                ],
               ),
+    );
+  }
+
+  Widget _buildAnnouncements() {
+    return ListView.builder(
+      itemCount: _announcements.length,
+      itemBuilder: (context, index) {
+        final announcement = _announcements[index];
+
+        String formattedDate = '';
+        final dateStr = announcement['createdAt'] ?? '';
+        final parsed = DateTime.tryParse(dateStr);
+        if (parsed != null) {
+          final local = parsed.toLocal();
+
+          formattedDate = DateFormat("MMMM d, y | h:mm a").format(local);
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //date
+              CustomFont(
+                text: formattedDate,
+                fontSize: 14.r,
+                color: Colors.grey.shade700,
+              ),
+              SizedBox(height: 8.h),
+
+              //title
+              CustomFont(
+                text: announcement['title'] ?? '',
+                fontSize: 20.r,
+                fontWeight: FontWeight.bold,
+              ),
+              SizedBox(height: 10.h),
+
+              //content
+              CustomFont(
+                text: announcement['content'] ?? '',
+                fontSize: 16.r,
+                textAlign: TextAlign.justify,
+              ),
+              SizedBox(height: 12.h),
+              Divider(thickness: 1, color: Colors.grey.shade400),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _rsoActivities() {
+    final activities = rsoDetails?['RSO_activities'] ?? [];
+
+    if (activities.isEmpty) {
+      return Center(
+        child: CustomFont(
+          text: "No Activities Available in this RSO",
+          fontSize: 16.r,
+          fontWeight: FontWeight.w600,
+          color: Colors.grey,
+        ),
+      );
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: activities.length,
+      itemBuilder: (context, index) {
+        final activity = activities[index];
+
+        //parse the date from backend
+        DateTime? startDate;
+        try {
+          startDate =
+              DateTime.parse(activity['Activity_start_datetime']).toLocal();
+        } catch (e) {
+          startDate = null;
+        }
+
+        //tas convert na yung date into string
+        String dateString =
+            startDate != null
+                ? DateFormat('MMMM d, yyyy • h:mm a').format(startDate)
+                : "No date available";
+
+        return ViewRSOActivityCard(
+          imageUrl: activity['Activity_image'],
+          name: activity['Activity_name'],
+          date: dateString,
+          description: activity["Activity_description"],
+          publicity: activity['Activity_publicity'],
+          status: activity['Activity_date_status'],
+          onTap: () {
+            print("Printing activity ID: ${activity["_id"]}");
+            Navigator.of(context).pushNamed(
+              '/viewActivityScreen',
+              arguments: {'activityID': activity['_id']},
+            );
+          },
+        );
+      },
     );
   }
 }

@@ -2,14 +2,75 @@ import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:nuspace_app/config/config.dart';
 import 'package:nuspace_app/firebase_options.dart';
 import 'package:http/http.dart' as http;
 
 class NotificationService {
   static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  static final FlutterLocalNotificationsPlugin _localNotifications =
+      FlutterLocalNotificationsPlugin();
 
-  //call this in main() to handle background messages
+  static Future<void> initLocalNotifications() async {
+    const AndroidInitializationSettings androidInitSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const DarwinInitializationSettings iosInitSettings =
+        DarwinInitializationSettings(
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
+
+    const InitializationSettings initSettings = InitializationSettings(
+      android: androidInitSettings,
+      iOS: iosInitSettings,
+    );
+
+    await _localNotifications.initialize(
+      initSettings,
+      onDidReceiveNotificationResponse: (response) {
+        //handle notification tap
+        print("Tapped notification with payload: ${response.payload}");
+      },
+    );
+  }
+
+  static Future<void> showNotification(RemoteMessage message) async {
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'nuspace_channel',
+          'NU Space Notifications',
+          channelDescription: 'This channel is for NU Space push notifications',
+          importance: Importance.max,
+          priority: Priority.high,
+          playSound: true,
+          enableVibration: true,
+        );
+
+    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    const NotificationDetails details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    await _localNotifications.show(
+      message.notification.hashCode,
+      message.notification?.title ?? 'No Title',
+      message.notification?.body ?? 'No body',
+      details,
+      payload: message.data['route'],
+    );
+  }
+
+  //call this in main to handle background messages
+  @pragma('vm:entry-point')
   static Future<void> firebaseBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -24,12 +85,27 @@ class NotificationService {
       badge: true,
       sound: true,
     );
-    print('Permission status: ${settings.authorizationStatus}');
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
+      print('User granted provisional permission');
+    } else {
+      print('user declined permission');
+    }
+
+    await _messaging.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
   }
 
   static void initializeFCMListerners() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('Foreground notification: ${message.notification?.title}');
+      showNotification(message);
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {

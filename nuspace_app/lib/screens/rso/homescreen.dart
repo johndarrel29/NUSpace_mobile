@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nuspace_app/config/config.dart';
 import 'package:nuspace_app/constants.dart';
+import 'package:nuspace_app/services/api_service.dart';
 import 'package:nuspace_app/widgets/customfont.dart';
 import 'package:nuspace_app/widgets/customrecommendrso.dart';
 import 'package:nuspace_app/widgets/customrso_listtile.dart';
@@ -54,22 +55,6 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _fetchRecommendedRSOs() async {
-    //check token..if no token, go back to landing screen
-    final token = await storage.read(key: "auth_token");
-    if (token == null) {
-      print("No auth token found, navigating to landing screen!");
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
-        SnackbarHelper.showSnackbar(
-          "Token expired or not found",
-          backgroundColor: Colors.red,
-        );
-      }
-      return;
-    }
-
     //check for internet connection
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
@@ -78,15 +63,19 @@ class HomeScreenState extends State<HomeScreen> {
     }
 
     try {
-      final response = await http
-          .get(
-            Uri.parse('${AppConfig.baseUrl}/api/student/rso/recommendRSO'),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token,
-            },
-          )
-          .timeout(Duration(seconds: 20));
+      final response = await apiRequest((accessToken) {
+        return http
+            .get(
+              Uri.parse('${AppConfig.baseUrl}/api/student/rso/recommendRSO'),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': accessToken,
+              },
+            )
+            .timeout(Duration(seconds: 20));
+      }, context: mounted ? context : null);
+
+      if (response == null) return; //session expired
 
       final responseData = jsonDecode(response.body);
 
@@ -143,22 +132,6 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _fetchAllJoinedRSOs() async {
-    //check token..if no token, go back to landing screen
-    final token = await storage.read(key: "auth_token");
-    if (token == null) {
-      print("No auth token found, navigating to landing screen!");
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
-        SnackbarHelper.showSnackbar(
-          "Token expired or not found",
-          backgroundColor: Colors.red,
-        );
-      }
-      return;
-    }
-
     //check for internet connection
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
@@ -167,15 +140,19 @@ class HomeScreenState extends State<HomeScreen> {
     }
 
     try {
-      final response = await http
-          .get(
-            Uri.parse('${AppConfig.baseUrl}/api/student/user/userProfile'),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token,
-            },
-          )
-          .timeout(Duration(seconds: 20));
+      final response = await apiRequest((accessToken) {
+        return http
+            .get(
+              Uri.parse('${AppConfig.baseUrl}/api/student/user/userProfile'),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': accessToken,
+              },
+            )
+            .timeout(Duration(seconds: 20));
+      }, context: mounted ? context : null);
+
+      if (response == null) return; //session expired
 
       final responseData = jsonDecode(response.body);
       print("Response data for joined RSOs: $responseData");

@@ -24,6 +24,7 @@ import 'package:nuspace_app/screens/authentication/loginscreen.dart';
 import 'package:nuspace_app/screens/mainscreen.dart';
 import 'package:nuspace_app/screens/authentication/registerscreen.dart';
 import 'package:nuspace_app/screens/user/profilescreen.dart';
+import 'package:nuspace_app/services/auth_service.dart';
 import 'package:nuspace_app/services/connectivity_service.dart';
 import 'package:nuspace_app/services/notification_service.dart';
 import 'package:nuspace_app/widgets/snackbarhelper.dart';
@@ -41,6 +42,8 @@ void main() async {
     NotificationService.firebaseBackgroundHandler,
   );
 
+  String initialRoute = await AuthService.checkLoginStatus();
+
   runApp(
     MultiProvider(
       providers: [
@@ -48,7 +51,7 @@ void main() async {
           create: (_) => ConnectivityService(),
         ),
       ],
-      child: const MainApp(),
+      child: MainApp(initialRoute: initialRoute),
     ),
   );
 }
@@ -60,7 +63,8 @@ void setPreferredOrientations() {
 final MyCustomNavigatorObserver myObserver = MyCustomNavigatorObserver();
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  final String initialRoute;
+  const MainApp({super.key, required this.initialRoute});
 
   static final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
@@ -77,7 +81,7 @@ class MainApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'NU Space',
           scaffoldMessengerKey: scaffoldMessengerKey,
-          initialRoute: '/landingScreen',
+          initialRoute: initialRoute,
           routes: {
             '/landingScreen': (context) => const LandingScreen(),
             '/loginScreen': (context) => const LoginScreen(),
@@ -187,28 +191,3 @@ class MyCustomNavigatorObserver extends RouteObserver<PageRoute<dynamic>> {
     debugPrint('Popped: ${route.settings.name}');
   }
 }
-
-// class HomePage extends StatefulWidget {
-//   const HomePage({super.key});
-
-//   @override
-//   State<HomePage> createState() => _HomePageState();
-// }
-
-// class _HomePageState extends State<HomePage> {
-//   @override
-//   void initState() {
-//     super.initState();
-//     NotificationService.requestPermission();
-//     NotificationService.initializeFCMListerners();
-//     NotificationService.getAndPrintFCMToken(
-//       userId: '688c8bcc47a6783fa2509b6d',
-//       role: 'student',
-//     );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Scaffold(body: Center(child: Text("NU Space Home")));
-//   }
-// }

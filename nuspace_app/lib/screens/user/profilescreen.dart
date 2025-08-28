@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:nuspace_app/config/config.dart';
+import 'package:nuspace_app/services/api_service.dart';
 import 'package:nuspace_app/widgets/custom_interestchip.dart';
 import 'package:nuspace_app/widgets/customtabswitch.dart';
 import 'package:provider/provider.dart';
@@ -48,22 +49,6 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _fetchProfileDetails() async {
-    //check token..if no token, go back to landing screen
-    final token = await storage.read(key: "auth_token");
-    if (token == null) {
-      print("No auth token found, navigating to landing screen!");
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
-        SnackbarHelper.showSnackbar(
-          "Token expired or not found",
-          backgroundColor: Colors.red,
-        );
-      }
-      return;
-    }
-
     //check for internet connection
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
@@ -72,15 +57,19 @@ class ProfileScreenState extends State<ProfileScreen> {
     }
 
     try {
-      final response = await http
-          .get(
-            Uri.parse('${AppConfig.baseUrl}/api/student/user/userProfile'),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token,
-            },
-          )
-          .timeout(Duration(seconds: 20));
+      final response = await apiRequest((accessToken) {
+        return http
+            .get(
+              Uri.parse('${AppConfig.baseUrl}/api/student/user/userProfile'),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': accessToken,
+              },
+            )
+            .timeout(Duration(seconds: 20));
+      }, context: context);
+
+      if (response == null) return; //session expired
 
       final responseData = jsonDecode(response.body);
 
@@ -129,22 +118,6 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _logout() async {
-    //check token..if no token, go back to landing screen
-    final token = await storage.read(key: "auth_token");
-    if (token == null) {
-      print("No auth token found, navigating to landing screen!");
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
-        SnackbarHelper.showSnackbar(
-          "Token expired or not found",
-          backgroundColor: Colors.red,
-        );
-      }
-      return;
-    }
-
     //check for internet connection
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
@@ -153,11 +126,43 @@ class ProfileScreenState extends State<ProfileScreen> {
     }
 
     try {
-      await storage.delete(key: "auth_token");
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
+      final response = await apiRequest((accessToken) {
+        return http
+            .post(
+              Uri.parse('${AppConfig.baseUrl}/api/login/logout'),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': accessToken,
+              },
+            )
+            .timeout(Duration(seconds: 20));
+      }, context: context);
+
+      if (response == null) return; //session expired
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && responseData['success'] == true) {
+        print("Successfully logout");
+
+        await storage.deleteAll();
+        if (mounted) {
+          Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
+        }
+        SnackbarHelper.showSnackbar(
+          "Logged out successfully",
+          backgroundColor: Colors.green,
+        );
+      } else {
+        print("Logout Failed: ${responseData['message']}");
+        if (mounted) {
+          SnackbarHelper.showSnackbar(
+            responseData['message'] ?? "Logout failed",
+            backgroundColor: Colors.red,
+          );
+        }
       }
     } on TimeoutException {
       // Handle Timeout (Server Down)
@@ -267,7 +272,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                     ),
                     SizedBox(height: 5.h),
                     CustomFont(
-                      text: "No RSO details found",
+                      text: "No profile details found",
                       fontSize: 16.r,
                       fontWeight: FontWeight.w600,
                       color: Colors.grey,

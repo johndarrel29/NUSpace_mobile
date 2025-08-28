@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
 import '../../constants.dart';
+import '../../services/api_service.dart';
 import '../../services/connectivity_service.dart';
 import '../../utils/internalserverdialog.dart';
 import '../../widgets/snackbarhelper.dart';
@@ -60,21 +61,6 @@ class _NotificationSettingsScreenState
   }
 
   Future<void> _loadSelectedSound() async {
-    final token = await storage.read(key: "auth_token");
-    if (token == null) {
-      print("No auth token found, navigating to landing screen!");
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
-        SnackbarHelper.showSnackbar(
-          "Token expired or not found",
-          backgroundColor: Colors.red,
-        );
-      }
-      return;
-    }
-
     //check for internet connection
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
@@ -88,17 +74,21 @@ class _NotificationSettingsScreenState
       final role = await storage.read(key: "user_role");
       print("Printing userId $userId && role $role");
 
-      final response = await http
-          .get(
-            Uri.parse(
-              '${AppConfig.baseUrl}/api/device-token/fetch-sound?userId=$userId&role=$role&token=$fcmToken&platform=mobile',
-            ),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token,
-            },
-          )
-          .timeout(Duration(seconds: 20));
+      final response = await apiRequest((accessToken) {
+        return http
+            .get(
+              Uri.parse(
+                '${AppConfig.baseUrl}/api/device-token/fetch-sound?userId=$userId&role=$role&token=$fcmToken&platform=mobile',
+              ),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': accessToken,
+              },
+            )
+            .timeout(Duration(seconds: 20));
+      }, context: mounted ? context : null);
+
+      if (response == null) return; //session expired
 
       final responseData = jsonDecode(response.body);
       print("Printing response data: $responseData");
@@ -144,21 +134,6 @@ class _NotificationSettingsScreenState
       _selectedSound = baseName;
     });
 
-    final token = await storage.read(key: "auth_token");
-    if (token == null) {
-      print("No auth token found, navigating to landing screen!");
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
-        SnackbarHelper.showSnackbar(
-          "Token expired or not found",
-          backgroundColor: Colors.red,
-        );
-      }
-      return;
-    }
-
     //check for internet connection
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
@@ -172,22 +147,26 @@ class _NotificationSettingsScreenState
       final role = await storage.read(key: "user_role");
       print("Printing userId $userId && role $role");
 
-      final response = await http
-          .put(
-            Uri.parse('${AppConfig.baseUrl}/api/device-token/sound'),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token,
-            },
-            body: jsonEncode({
-              "userId": userId,
-              "role": role,
-              "token": fcmToken,
-              "platform": "mobile",
-              "notificationSound": baseName,
-            }),
-          )
-          .timeout(Duration(seconds: 20));
+      final response = await apiRequest((accessToken) {
+        return http
+            .put(
+              Uri.parse('${AppConfig.baseUrl}/api/device-token/sound'),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': accessToken,
+              },
+              body: jsonEncode({
+                "userId": userId,
+                "role": role,
+                "token": fcmToken,
+                "platform": "mobile",
+                "notificationSound": baseName,
+              }),
+            )
+            .timeout(Duration(seconds: 20));
+      }, context: mounted ? context : null);
+
+      if (response == null) return; //session expired
 
       if (response.statusCode == 200) {
         print("✅ Sound updated on backend: $baseName");
@@ -277,34 +256,39 @@ class _NotificationSettingsScreenState
           ),
         ),
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 0.w),
-        child: ListView.builder(
-          itemCount: _availableSounds.length,
-          itemBuilder: (context, index) {
-            final sound = _availableSounds[index];
+      body:
+          _isLoading
+              ? Center(
+                child: CircularProgressIndicator(color: nuBlue, strokeAlign: 5),
+              )
+              : Padding(
+                padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 0.w),
+                child: ListView.builder(
+                  itemCount: _availableSounds.length,
+                  itemBuilder: (context, index) {
+                    final sound = _availableSounds[index];
 
-            return ListTile(
-              title: CustomFont(
-                text: sound.replaceAll('.mp3', ''),
-                fontSize: 16.r,
+                    return ListTile(
+                      title: CustomFont(
+                        text: sound.replaceAll('.mp3', ''),
+                        fontSize: 16.r,
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (sound.replaceAll('.mp3', '') == _selectedSound)
+                            Icon(Icons.check, color: Colors.green, size: 25.r),
+                          IconButton(
+                            icon: Icon(Icons.play_arrow, size: 25.r),
+                            onPressed: () => _playSound(sound),
+                          ),
+                        ],
+                      ),
+                      onTap: () => _selectSound(sound),
+                    );
+                  },
+                ),
               ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (sound.replaceAll('.mp3', '') == _selectedSound)
-                    Icon(Icons.check, color: Colors.green, size: 25.r),
-                  IconButton(
-                    icon: Icon(Icons.play_arrow, size: 25.r),
-                    onPressed: () => _playSound(sound),
-                  ),
-                ],
-              ),
-              onTap: () => _selectSound(sound),
-            );
-          },
-        ),
-      ),
     );
   }
 }

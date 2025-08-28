@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:nuspace_app/config/config.dart';
+import 'package:nuspace_app/services/api_service.dart';
 import 'package:nuspace_app/widgets/activitycard.dart';
 import 'package:nuspace_app/widgets/customtabswitch.dart';
 import 'package:provider/provider.dart';
@@ -99,22 +100,6 @@ class ActivityScreenState extends State<ActivityScreen> {
   }
 
   Future<void> _fetchAllActivities() async {
-    //check token..if no token, go back to landing screen
-    final token = await storage.read(key: "auth_token");
-    if (token == null) {
-      print("No auth token found, navigating to landing screen!");
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
-        SnackbarHelper.showSnackbar(
-          "Token expired or not found",
-          backgroundColor: Colors.red,
-        );
-      }
-      return;
-    }
-
     //check for internet connection
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
@@ -123,17 +108,21 @@ class ActivityScreenState extends State<ActivityScreen> {
     }
 
     try {
-      final response = await http
-          .get(
-            Uri.parse(
-              '${AppConfig.baseUrl}/api/student/activities/getallActivities',
-            ),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token,
-            },
-          )
-          .timeout(Duration(seconds: 20));
+      final response = await apiRequest((accessToken) {
+        return http
+            .get(
+              Uri.parse(
+                '${AppConfig.baseUrl}/api/student/activities/getallActivities',
+              ),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': accessToken,
+              },
+            )
+            .timeout(Duration(seconds: 20));
+      }, context: mounted ? context : null);
+
+      if (response == null) return; //session expired
 
       final responseData = jsonDecode(response.body);
 
@@ -182,22 +171,6 @@ class ActivityScreenState extends State<ActivityScreen> {
   }
 
   Future<void> _joinedActivities() async {
-    //check token..if no token, go back to landing screen
-    final token = await storage.read(key: "auth_token");
-    if (token == null) {
-      print("No auth token found, navigating to landing screen!");
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
-        SnackbarHelper.showSnackbar(
-          "Token expired or not found",
-          backgroundColor: Colors.red,
-        );
-      }
-      return;
-    }
-
     //check for internet connection
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
@@ -206,15 +179,19 @@ class ActivityScreenState extends State<ActivityScreen> {
     }
 
     try {
-      final response = await http
-          .get(
-            Uri.parse('${AppConfig.baseUrl}/api/student/user/userProfile'),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token,
-            },
-          )
-          .timeout(Duration(seconds: 20));
+      final response = await apiRequest((accessToken) {
+        return http
+            .get(
+              Uri.parse('${AppConfig.baseUrl}/api/student/user/userProfile'),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': accessToken,
+              },
+            )
+            .timeout(Duration(seconds: 20));
+      }, context: mounted ? context : null);
+
+      if (response == null) return; //session expired
 
       final responseData = jsonDecode(response.body);
       print(
@@ -341,6 +318,7 @@ class ActivityScreenState extends State<ActivityScreen> {
                                         "No Activities Available At The Moment",
                                     fontSize: 16.r,
                                     color: Colors.grey.shade600,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 )
                                 : GestureDetector(

@@ -91,6 +91,11 @@ class _LoginScreenState extends State<LoginScreen> {
           await storage.write(key: "auth_token", value: token);
           print("Stored token: $token");
 
+          //store refresh token
+          String refreshToken = responseData['refreshToken'];
+          await storage.write(key: "refresh_token", value: refreshToken);
+          print("stored refresh token: $refreshToken");
+
           final userData = responseData['user'];
           print(
             "Printing user $userData and printing email only ${userData['email']}",

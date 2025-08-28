@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mime/mime.dart';
 import 'package:nuspace_app/config/config.dart';
+import 'package:nuspace_app/services/api_service.dart';
 import 'package:nuspace_app/widgets/customform.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -71,17 +72,21 @@ class _RSOMembershipFormsState extends State<RSOMembershipForms> {
     }
 
     try {
-      final response = await http
-          .get(
-            Uri.parse(
-              '${AppConfig.baseUrl}/api/student/forms/fetch-membership-forms/${widget.rsoId}',
-            ),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token,
-            },
-          )
-          .timeout(Duration(seconds: 20));
+      final response = await apiRequest((accessToken) {
+        return http
+            .get(
+              Uri.parse(
+                '${AppConfig.baseUrl}/api/student/forms/fetch-membership-forms/${widget.rsoId}',
+              ),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token,
+              },
+            )
+            .timeout(Duration(seconds: 20));
+      }, context: mounted ? context : null);
+
+      if (response == null) return; //session expired
 
       final responseData = jsonDecode(response.body);
       print("printing raw response: $responseData");

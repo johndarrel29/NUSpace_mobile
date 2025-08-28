@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:nuspace_app/config/config.dart';
+import 'package:nuspace_app/services/api_service.dart';
 import 'package:nuspace_app/widgets/customtabswitch.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -48,22 +49,6 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
 
   Future<void> _fetchAnnouncements() async {
     print("View announcement screen rsoId: ${widget.rsoId}");
-    //check token..if no token, go back to landing screen
-    final token = await storage.read(key: "auth_token");
-    if (token == null) {
-      print("No auth token found, navigating to landing screen!");
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
-        SnackbarHelper.showSnackbar(
-          "Token expired or not found",
-          backgroundColor: Colors.red,
-        );
-      }
-      return;
-    }
-
     //check for internet connection
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
@@ -72,17 +57,21 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
     }
 
     try {
-      final response = await http
-          .get(
-            Uri.parse(
-              '${AppConfig.baseUrl}/api/student/announcements/getStudentAnnouncement/${widget.rsoId}',
-            ),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token,
-            },
-          )
-          .timeout(Duration(seconds: 20));
+      final response = await apiRequest((accessToken) {
+        return http
+            .get(
+              Uri.parse(
+                '${AppConfig.baseUrl}/api/student/announcements/getStudentAnnouncement/${widget.rsoId}',
+              ),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': accessToken,
+              },
+            )
+            .timeout(Duration(seconds: 20));
+      }, context: mounted ? context : null);
+
+      if (response == null) return; //session expired
 
       final responseData = jsonDecode(response.body);
       print("response data: $responseData");
@@ -130,22 +119,6 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
 
   Future<void> _fetchRSODetails() async {
     print("View RSO Screen rsoId: ${widget.rsoId}");
-    //check token..if no token, go back to landing screen
-    final token = await storage.read(key: "auth_token");
-    if (token == null) {
-      print("No auth token found, navigating to landing screen!");
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
-        SnackbarHelper.showSnackbar(
-          "Token expired or not found",
-          backgroundColor: Colors.red,
-        );
-      }
-      return;
-    }
-
     //check for internet connection
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
@@ -154,17 +127,21 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
     }
 
     try {
-      final response = await http
-          .get(
-            Uri.parse(
-              '${AppConfig.baseUrl}/api/student/rso/viewRSO/${widget.rsoId}',
-            ),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token,
-            },
-          )
-          .timeout(Duration(seconds: 20));
+      final response = await apiRequest((accessToken) {
+        return http
+            .get(
+              Uri.parse(
+                '${AppConfig.baseUrl}/api/student/rso/viewRSO/${widget.rsoId}',
+              ),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': accessToken,
+              },
+            )
+            .timeout(Duration(seconds: 20));
+      }, context: mounted ? context : null);
+
+      if (response == null) return; //session expired
 
       final responseData = jsonDecode(response.body);
 

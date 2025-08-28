@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nuspace_app/config/config.dart';
+import 'package:nuspace_app/services/api_service.dart';
 import 'package:nuspace_app/widgets/custom_interestchip.dart';
 import 'package:nuspace_app/widgets/customfont.dart';
 import 'package:provider/provider.dart';
@@ -65,22 +66,6 @@ class _InterestScreenState extends State<InterestScreen> {
       _errormessage = null;
     });
 
-    //check token..if no token, go back to landing screen
-    final token = await storage.read(key: "auth_token");
-    if (token == null) {
-      print("No auth token found, navigating to landing screen!");
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
-        SnackbarHelper.showSnackbar(
-          "Token expired or not found",
-          backgroundColor: Colors.red,
-        );
-      }
-      return;
-    }
-
     //check for internet connection
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
@@ -90,15 +75,19 @@ class _InterestScreenState extends State<InterestScreen> {
     }
 
     try {
-      final response = await http
-          .get(
-            Uri.parse('${AppConfig.baseUrl}/api/tags/tagsChoices'),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token,
-            },
-          )
-          .timeout(Duration(seconds: 20));
+      final response = await apiRequest((accessToken) {
+        return http
+            .get(
+              Uri.parse('${AppConfig.baseUrl}/api/tags/tagsChoices'),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': accessToken,
+              },
+            )
+            .timeout(Duration(seconds: 20));
+      }, context: mounted ? context : null);
+
+      if (response == null) return; //session expired
 
       final responseData = jsonDecode(response.body);
       print("Response data: $responseData");
@@ -156,22 +145,6 @@ class _InterestScreenState extends State<InterestScreen> {
       _isLoading = true;
     });
 
-    //check token..if no token, go back to landing screen
-    final token = await storage.read(key: "auth_token");
-    if (token == null) {
-      print("No auth token found, navigating to landing screen!");
-      if (mounted) {
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil('/landingScreen', (route) => false);
-        SnackbarHelper.showSnackbar(
-          "Token expired or not found",
-          backgroundColor: Colors.red,
-        );
-      }
-      return;
-    }
-
     //check for internet connection
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
@@ -181,16 +154,20 @@ class _InterestScreenState extends State<InterestScreen> {
     }
 
     try {
-      final response = await http
-          .patch(
-            Uri.parse('${AppConfig.baseUrl}/api/student/user/addInterests'),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token,
-            },
-            body: jsonEncode({"interests": selectedInterests}),
-          )
-          .timeout(Duration(seconds: 20));
+      final response = await apiRequest((accessToken) {
+        return http
+            .patch(
+              Uri.parse('${AppConfig.baseUrl}/api/student/user/addInterests'),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': accessToken,
+              },
+              body: jsonEncode({"interests": selectedInterests}),
+            )
+            .timeout(Duration(seconds: 20));
+      }, context: mounted ? context : null);
+
+      if (response == null) return; //session expired
 
       final responseData = jsonDecode(response.body);
       print("Response data for interests: $responseData");

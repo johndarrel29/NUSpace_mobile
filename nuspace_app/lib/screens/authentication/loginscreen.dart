@@ -99,6 +99,9 @@ class _LoginScreenState extends State<LoginScreen> {
           String userId = userData['id'];
           await storage.write(key: "user_id", value: userId);
 
+          String userRole = userData['role'];
+          await storage.write(key: "user_role", value: userRole);
+
           //send fcm device token to backend to be saved
           NotificationService.getAndPrintFCMToken(
             userId: userData['id'],

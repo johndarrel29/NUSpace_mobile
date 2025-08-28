@@ -38,34 +38,51 @@ class NotificationService {
   }
 
   static Future<void> showNotification(RemoteMessage message) async {
-    const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
-          'nuspace_channel',
-          'NU Space Notifications',
-          channelDescription: 'This channel is for NU Space push notifications',
-          importance: Importance.max,
-          priority: Priority.high,
-          playSound: true,
-          enableVibration: true,
-        );
+    final soundName = message.data['sound'];
+    final title = message.data['title'] ?? 'No Title';
+    final body = message.data['body'] ?? 'No body';
+    final route = message.data['route'];
 
-    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+    final notificationId =
+        message.data['id']?.hashCode ??
+        (DateTime.now().millisecondsSinceEpoch % 2147483647);
+
+    print("Notification ID: $notificationId, Sound: $soundName");
+
+    final channelId = 'nuspace_channel_$soundName';
+
+    AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      channelId,
+      'NU Space Notifications ($soundName)',
+      channelDescription: 'This channel is for NU Space push notifications',
+      importance: Importance.max,
+      priority: Priority.high,
+      playSound: true,
+      enableVibration: true,
+      sound:
+          soundName != null
+              ? RawResourceAndroidNotificationSound(soundName)
+              : RawResourceAndroidNotificationSound('notification1'),
+    );
+
+    DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
+      sound: soundName != null ? "$soundName.wav" : null,
     );
 
-    const NotificationDetails details = NotificationDetails(
+    NotificationDetails details = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
     );
 
     await _localNotifications.show(
-      message.notification.hashCode,
-      message.notification?.title ?? 'No Title',
-      message.notification?.body ?? 'No body',
+      notificationId,
+      title,
+      body,
       details,
-      payload: message.data['route'],
+      payload: route,
     );
   }
 
@@ -75,6 +92,7 @@ class NotificationService {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    await NotificationService.showNotification(message);
     print('Background notification: ${message.notification?.title}');
   }
 
@@ -133,7 +151,7 @@ class NotificationService {
   ) async {
     try {
       final response = await http.post(
-        Uri.parse('${AppConfig.baseUrl}/api/device-token'),
+        Uri.parse('${AppConfig.baseUrl}/api/device-token/save-token'),
         headers: {
           'Content-Type': 'application/json',
           //Authorization JWT Token

@@ -9,11 +9,11 @@ import 'package:nuspace_app/widgets/custom_notification.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
-import '../constants.dart';
-import '../services/connectivity_service.dart';
-import '../utils/internalserverdialog.dart';
-import '../widgets/customfont.dart';
-import '../widgets/snackbarhelper.dart';
+import '../../constants.dart';
+import '../../services/connectivity_service.dart';
+import '../../utils/internalserverdialog.dart';
+import '../../widgets/customfont.dart';
+import '../../widgets/snackbarhelper.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -228,7 +228,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
           Padding(
             padding: EdgeInsets.only(right: 6.w),
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushNamed('/notificationSettingsScreen');
+              },
               icon: Icon(Icons.edit_notifications, size: 24.r),
               color: nuBlue,
             ),
@@ -366,6 +368,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                   ],
                   if (earlierNotifications.isNotEmpty) ...[
+                    SizedBox(height: 20.h),
                     Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: 16.w,

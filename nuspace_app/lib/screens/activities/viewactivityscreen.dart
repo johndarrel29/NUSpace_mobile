@@ -29,7 +29,7 @@ class _ViewActivityScreenState extends State<ViewActivityScreen> {
   final storage = FlutterSecureStorage();
   Map<String, dynamic>? activityDetails;
   bool _isLoading = true;
-  bool? didParticipate;
+  bool? isCurrentRSOMember;
 
   late ConnectivityService connectivityService;
 
@@ -87,6 +87,7 @@ class _ViewActivityScreenState extends State<ViewActivityScreen> {
         if (mounted) {
           setState(() {
             activityDetails = responseData['activity'];
+            isCurrentRSOMember = responseData['isCurrentRSOMember'];
             _isLoading = false;
           });
         }
@@ -128,7 +129,6 @@ class _ViewActivityScreenState extends State<ViewActivityScreen> {
   @override
   Widget build(BuildContext context) {
     bool isOpenForAll = activityDetails?['Activity_publicity'] == true;
-
     DateTime? startDate;
     DateTime? endDate;
 
@@ -507,25 +507,36 @@ class _ViewActivityScreenState extends State<ViewActivityScreen> {
                               fontSize: 14.r,
                             ),
                             SizedBox(height: 20.h),
-                            //lilitaw lng to kapag upcoming lng yung activity
-                            //pero kapag tapos na and on going na ..dont
+
                             if (activityDetails?['Activity_date_status'] ==
                                 'upcoming') ...[
-                              CustomButton(
-                                text: "Join Activity",
-                                height: 40.h,
-                                fontSize: 14.r,
-                                fontweight: FontWeight.bold,
-                                onPressed: () {
-                                  Navigator.of(context).pushNamed(
-                                    '/activityForms',
-                                    arguments: {
-                                      'activityId': activityDetails?['_id'],
-                                      'formType': 'pre-activity',
-                                    },
-                                  );
-                                },
-                              ),
+                              if (activityDetails?['Acivity_publicity'] ==
+                                      true ||
+                                  isCurrentRSOMember == true) ...[
+                                CustomButton(
+                                  text: "Join Activity",
+                                  height: 40.h,
+                                  fontSize: 14.r,
+                                  fontweight: FontWeight.bold,
+                                  onPressed: () {
+                                    Navigator.of(context).pushNamed(
+                                      '/activityForms',
+                                      arguments: {
+                                        'activityId': activityDetails?['_id'],
+                                        'formType': 'pre-activity',
+                                      },
+                                    );
+                                  },
+                                ),
+                              ] else ...[
+                                CustomButton(
+                                  text: "Only For RSO Members",
+                                  height: 40.h,
+                                  fontSize: 14.r,
+                                  fontweight: FontWeight.bold,
+                                  onPressed: null,
+                                ),
+                              ],
                             ] else if (activityDetails?['Activity_date_status'] ==
                                 'done') ...[
                               CustomButton(

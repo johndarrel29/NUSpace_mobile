@@ -12,7 +12,8 @@ import 'package:nuspace_app/screens/activities/viewactivityscreen.dart';
 import 'package:nuspace_app/screens/authentication/checkemailscreen.dart';
 import 'package:nuspace_app/screens/authentication/emailverificationscreen.dart';
 import 'package:nuspace_app/screens/authentication/forgotpasswordscreen.dart';
-import 'package:nuspace_app/screens/notification_screen.dart';
+import 'package:nuspace_app/screens/notification/notification_screen.dart';
+import 'package:nuspace_app/screens/notification/notification_settings_screen.dart';
 import 'package:nuspace_app/screens/rso/homescreen.dart';
 import 'package:nuspace_app/screens/rso/rsoannouncementscreen.dart';
 import 'package:nuspace_app/screens/rso/rsomembershipforms.dart';
@@ -88,6 +89,8 @@ class MainApp extends StatelessWidget {
             '/profileScreen': (context) => const ProfileScreen(),
             '/mainScreen': (context) => MainScreen(),
             '/notificationScreen': (context) => NotificationScreen(),
+            '/notificationSettingsScreen':
+                (context) => NotificationSettingsScreen(),
           },
           onGenerateRoute: (settings) {
             //routes that needs arguments

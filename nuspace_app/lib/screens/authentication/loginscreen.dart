@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -70,6 +71,11 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       try {
+        String? fcmToken = await FirebaseMessaging.instance.getToken();
+        if (fcmToken != null) {
+          await storage.write(key: "device_token", value: fcmToken);
+        }
+
         final response = await http
             .post(
               Uri.parse('${AppConfig.baseUrl}/api/login/mobileLogin'),
@@ -78,6 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 "email": _emailController.text.trim(),
                 "password": _passwordController.text.trim(),
                 "platform": "mobile",
+                "deviceToken": fcmToken,
               }),
             )
             .timeout(Duration(seconds: 20));
@@ -108,10 +115,10 @@ class _LoginScreenState extends State<LoginScreen> {
           await storage.write(key: "user_role", value: userRole);
 
           //send fcm device token to backend to be saved
-          NotificationService.getAndPrintFCMToken(
-            userId: userData['id'],
-            role: userData['role'],
-          );
+          // NotificationService.getAndPrintFCMToken(
+          //   userId: userData['id'],
+          //   role: userData['role'],
+          // );
 
           //check if the student_interest is not null
           bool hasInterests =

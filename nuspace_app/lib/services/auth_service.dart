@@ -10,11 +10,17 @@ final storage = FlutterSecureStorage();
 class AuthService {
   static Future<String?> refreshAccessToken(String refreshToken) async {
     try {
+      final String? deviceToken = await storage.read(key: "device_token");
+      if (deviceToken == null) return null;
+
       final response = await http
           .post(
             Uri.parse('${AppConfig.baseUrl}/api/login/refresh-token'),
             headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({'refreshToken': refreshToken}),
+            body: jsonEncode({
+              'refreshToken': refreshToken,
+              'deviceToken': deviceToken,
+            }),
           )
           .timeout(Duration(seconds: 20));
 

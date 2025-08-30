@@ -126,6 +126,10 @@ class ProfileScreenState extends State<ProfileScreen> {
     }
 
     try {
+      String? deviceToken = await storage.read(key: "device_token");
+      String? userId = await storage.read(key: "user_id");
+      print("Printing device token: $deviceToken && user id: $userId");
+
       final response = await apiRequest((accessToken) {
         return http
             .post(
@@ -134,6 +138,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                 'Content-Type': 'application/json',
                 'Authorization': accessToken,
               },
+              body: jsonEncode({"deviceToken": deviceToken, "userId": userId}),
             )
             .timeout(Duration(seconds: 20));
       }, context: context);

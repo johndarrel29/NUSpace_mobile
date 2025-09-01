@@ -50,6 +50,7 @@ dependencies:
   mime: ^2.0.0
   just_audio: ^0.10.4
   jwt_decode: ^0.3.1
+  flutter_native_splash: ^2.4.6
 
 dev_dependencies:
   flutter_test:
@@ -65,7 +66,12 @@ flutter_launcher_icons:
   adaptive_icon_background: "#FF32418C" 
   adaptive_icon_foreground: "assets/images/nuspace_icon_blue.png"
 
-
+flutter_native_splash:
+  color: "#FFFFFF" # background color
+  image: assets/images/nuspace_icon_blue.png # your NU Space logo
+  android: true
+  ios: true
+  web: false
 
 flutter:
   uses-material-design: true

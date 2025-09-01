@@ -8,7 +8,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nuspace_app/config/config.dart';
 import 'package:nuspace_app/constants.dart';
 import 'package:nuspace_app/services/connectivity_service.dart';
-import 'package:nuspace_app/services/notification_service.dart';
 import 'package:nuspace_app/widgets/custombutton.dart';
 import 'package:nuspace_app/widgets/customfont.dart';
 import 'package:nuspace_app/widgets/customtextformfield.dart';

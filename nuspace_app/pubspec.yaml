@@ -76,10 +76,24 @@ flutter_native_splash:
 flutter:
   uses-material-design: true
   assets:
-  - .env
-  - assets/images/
-  - assets/fonts/
-  - assets/sounds/
+    - .env
+    - assets/images/
+    - assets/fonts/
+    - assets/sounds/
+    - assets/sounds/notification_1.mp3
+    - assets/sounds/notification_2.mp3
+    - assets/sounds/notification_3.mp3
+    - assets/sounds/notification_4.mp3
+    - assets/sounds/notification_5.mp3
+    - assets/sounds/notification_6.mp3
+    - assets/sounds/notification_7.mp3
+    - assets/sounds/notification_8.mp3
+    - assets/sounds/notification_9.mp3
+    - assets/sounds/notification_10.mp3
+    - assets/sounds/notification_11.mp3
+    - assets/sounds/notification_12.mp3
+    - assets/sounds/notification_13.mp3
+
   fonts:
   - family: ClanOT
     fonts: 

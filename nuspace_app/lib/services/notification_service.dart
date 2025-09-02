@@ -63,7 +63,7 @@ class NotificationService {
       sound:
           soundName != null
               ? RawResourceAndroidNotificationSound(soundName)
-              : RawResourceAndroidNotificationSound('notification1'),
+              : RawResourceAndroidNotificationSound('notification_1'),
     );
 
     DarwinNotificationDetails iosDetails = DarwinNotificationDetails(

@@ -28,19 +28,19 @@ class NotificationSettingsScreen extends StatefulWidget {
 class _NotificationSettingsScreenState
     extends State<NotificationSettingsScreen> {
   final List<String> _availableSounds = [
-    'notification1.mp3',
-    'notification2.mp3',
-    'notification3.mp3',
-    'notification4.mp3',
-    'notification5.mp3',
-    'notification6.mp3',
-    'notification7.mp3',
-    'notification8.mp3',
-    'notification9.mp3',
-    'notification10.mp3',
-    'notification11.mp3',
-    'notification12.mp3',
-    'notification13.mp3',
+    'notification_1.mp3',
+    'notification_2.mp3',
+    'notification_3.mp3',
+    'notification_4.mp3',
+    'notification_5.mp3',
+    'notification_6.mp3',
+    'notification_7.mp3',
+    'notification_8.mp3',
+    'notification_9.mp3',
+    'notification_10.mp3',
+    'notification_11.mp3',
+    'notification_12.mp3',
+    'notification_13.mp3',
   ];
 
   String? _selectedSound;
@@ -199,8 +199,27 @@ class _NotificationSettingsScreenState
 
   Future<void> _playSound(String sound) async {
     try {
-      await _player.setAsset('assets/sounds/$sound');
-      _player.play();
+      final assetPath = 'assets/sounds/$sound';
+
+      // Just to debug: check if sound name is not null/empty
+      if (sound.isEmpty) {
+        print("⚠️ Sound name is empty, cannot play.");
+        return;
+      }
+
+      print("🔊 Attempting to play sound: $assetPath");
+
+      // Ensure player is stopped first
+      if (_player.playing) {
+        await _player.stop();
+      }
+
+      // Load asset
+      await _player.setAsset(assetPath);
+
+      // Play
+      await _player.play();
+      print("✅ Sound played successfully: $sound");
     } catch (e) {
       print("Error playing sound: $e");
     }

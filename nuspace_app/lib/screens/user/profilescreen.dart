@@ -278,7 +278,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(height: 5.h),
                     CustomFont(
                       text: "No profile details found",
-                      fontSize: 16.r,
+                      fontSize: 18.r,
                       fontWeight: FontWeight.w600,
                       color: Colors.grey,
                     ),
@@ -296,7 +296,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           CustomFont(
                             text: "Profile",
-                            fontSize: 18.r,
+                            fontSize: 20.r,
                             fontWeight: FontWeight.bold,
                           ),
                           SizedBox(height: 40.h),
@@ -321,12 +321,12 @@ class ProfileScreenState extends State<ProfileScreen> {
                           SizedBox(height: 5.h),
                           CustomFont(
                             text: profileDetails?['email'] ?? "Email",
-                            fontSize: 14.r,
+                            fontSize: 16.r,
                           ),
                           SizedBox(height: 5.h),
                           CustomFont(
                             text: profileDetails?['college'] ?? "college",
-                            fontSize: 14.r,
+                            fontSize: 16.r,
                           ),
                           SizedBox(height: 15.h),
                         ],
@@ -352,7 +352,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                             children: [
                               CustomFont(
                                 text: "Want to change preferences?",
-                                fontSize: 14.r,
+                                fontSize: 16.r,
                                 fontWeight: FontWeight.w500,
                               ),
                               InkWell(
@@ -367,7 +367,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   child: CustomFont(
                                     text: " Click here",
-                                    fontSize: 14.r,
+                                    fontSize: 16.r,
                                     color: nuBlue,
                                     fontWeight: FontWeight.bold,
                                   ),

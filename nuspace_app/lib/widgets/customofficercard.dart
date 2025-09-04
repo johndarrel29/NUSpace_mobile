@@ -34,13 +34,13 @@ class CustomOfficerCard extends StatelessWidget {
                 imageUrl.isNotEmpty
                     ? CachedNetworkImage(
                       imageUrl: imageUrl,
-                      width: 70.r,
-                      height: 70.r,
+                      width: 80.r,
+                      height: 80.r,
                       fit: BoxFit.cover,
                       placeholder:
                           (context, url) => Container(
-                            width: 70.r,
-                            height: 70.r,
+                            width: 80.r,
+                            height: 80.r,
                             color: Colors.grey[300],
                             child: const Center(
                               child: CircularProgressIndicator(strokeWidth: 2),
@@ -48,15 +48,15 @@ class CustomOfficerCard extends StatelessWidget {
                           ),
                       errorWidget:
                           (context, url, error) => Container(
-                            width: 70.r,
-                            height: 70.r,
+                            width: 80.r,
+                            height: 80.r,
                             color: Colors.grey[300],
                             child: const Icon(Icons.error, color: Colors.red),
                           ),
                     )
                     : Container(
-                      width: 70.r,
-                      height: 70.r,
+                      width: 80.r,
+                      height: 80.r,
                       color: Colors.grey[300],
                       child: const Icon(Icons.image, color: Colors.white),
                     ),
@@ -64,7 +64,7 @@ class CustomOfficerCard extends StatelessWidget {
           SizedBox(height: 12.h),
           CustomFont(
             text: name,
-            fontSize: 14.r,
+            fontSize: 16.r,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             fontWeight: FontWeight.bold,
@@ -73,7 +73,7 @@ class CustomOfficerCard extends StatelessWidget {
           SizedBox(height: 5.h),
           CustomFont(
             text: position,
-            fontSize: 12.r,
+            fontSize: 14.r,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,

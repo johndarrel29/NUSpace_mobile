@@ -15,6 +15,7 @@ import 'package:http/http.dart' as http;
 import '../../constants.dart';
 import '../../services/connectivity_service.dart';
 import '../../utils/internalserverdialog.dart';
+import '../../widgets/custombutton.dart';
 import '../../widgets/customfont.dart';
 import '../../widgets/snackbarhelper.dart';
 
@@ -37,6 +38,14 @@ class ActivityScreenState extends State<ActivityScreen> {
 
   int _selectedIndex = 0;
   bool _isLoading = true;
+
+  int activitiesLimit = 5;
+  int activitesPage = 1;
+  bool _activitiesHasNextPage = true;
+
+  int profileActivitiesLimit = 5;
+  int profileActivitiesPage = 1;
+  bool _profileActivitiesHasNextPage = true;
 
   late ConnectivityService connectivityService;
 
@@ -99,7 +108,7 @@ class ActivityScreenState extends State<ActivityScreen> {
     });
   }
 
-  Future<void> _fetchAllActivities() async {
+  Future<void> _fetchAllActivities({bool append = false}) async {
     //check for internet connection
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
@@ -112,7 +121,7 @@ class ActivityScreenState extends State<ActivityScreen> {
         return http
             .get(
               Uri.parse(
-                '${AppConfig.baseUrl}/api/student/activities/getallActivities',
+                '${AppConfig.baseUrl}/api/student/activities/getallActivities?page=$activitesPage&limit=$activitiesLimit',
               ),
               headers: {
                 'Content-Type': 'application/json',
@@ -129,14 +138,26 @@ class ActivityScreenState extends State<ActivityScreen> {
       if (response.statusCode == 200 && responseData['success'] == true) {
         if (mounted) {
           setState(() {
-            activities = List<Map<String, dynamic>>.from(
+            final newActivities = List<Map<String, dynamic>>.from(
               responseData['activities'] ?? [],
             );
+
+            if (append) {
+              activities.addAll(newActivities);
+            } else {
+              activities = newActivities;
+            }
+
             filteredActivities = activities;
+            _activitiesHasNextPage =
+                responseData['pagination']?['hasNextPage'] ?? false;
             _isLoading = false;
           });
 
           print("filtered Activities from all RSOs: $filteredActivities");
+          print(
+            "total activities: ${responseData['pagination']?['totalActivities']}",
+          );
         }
       } else {
         setState(() {
@@ -170,7 +191,7 @@ class ActivityScreenState extends State<ActivityScreen> {
     }
   }
 
-  Future<void> _joinedActivities() async {
+  Future<void> _joinedActivities({bool loadMore = false}) async {
     //check for internet connection
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
@@ -182,7 +203,9 @@ class ActivityScreenState extends State<ActivityScreen> {
       final response = await apiRequest((accessToken) {
         return http
             .get(
-              Uri.parse('${AppConfig.baseUrl}/api/student/user/userProfile'),
+              Uri.parse(
+                '${AppConfig.baseUrl}/api/student/user/userProfile?page=$profileActivitiesPage&limit=$profileActivitiesLimit',
+              ),
               headers: {
                 'Content-Type': 'application/json',
                 'Authorization': accessToken,
@@ -199,12 +222,23 @@ class ActivityScreenState extends State<ActivityScreen> {
       );
 
       if (response.statusCode == 200 && responseData['success'] == true) {
+        final newJoinedActivities = List<Map<String, dynamic>>.from(
+          responseData['activities'] ?? [],
+        );
+
         if (mounted) {
           setState(() {
-            joinedActivities = List<Map<String, dynamic>>.from(
-              responseData['activities'] ?? '',
-            );
+            if (loadMore) {
+              joinedActivities.addAll(newJoinedActivities);
+            } else {
+              joinedActivities = newJoinedActivities;
+            }
+
             filteredJoinedActivities = joinedActivities;
+
+            _profileActivitiesHasNextPage =
+                responseData['pagination']?['hasNextPage'] ?? false;
+
             _isLoading = false;
             print(
               "Lagay yung joined activities sa list $filteredJoinedActivities",
@@ -398,8 +432,41 @@ class ActivityScreenState extends State<ActivityScreen> {
                                             physics:
                                                 NeverScrollableScrollPhysics(),
                                             itemCount:
-                                                filteredActivities.length,
+                                                filteredActivities.length + 1,
                                             itemBuilder: (context, index) {
+                                              if (index ==
+                                                  filteredActivities.length) {
+                                                if (_isLoading) {
+                                                  return Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  );
+                                                }
+
+                                                if (!_activitiesHasNextPage) {
+                                                  return SizedBox.shrink();
+                                                }
+
+                                                return Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: 12.h,
+                                                  ),
+                                                  child: CustomButton(
+                                                    text: "See more",
+                                                    fontSize: 16.r,
+                                                    fontweight: FontWeight.bold,
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        activitesPage += 1;
+                                                      });
+                                                      _fetchAllActivities(
+                                                        append: true,
+                                                      );
+                                                    },
+                                                  ),
+                                                );
+                                              }
+
                                               final activity =
                                                   filteredActivities[index];
 
@@ -559,8 +626,45 @@ class ActivityScreenState extends State<ActivityScreen> {
                                             physics:
                                                 NeverScrollableScrollPhysics(),
                                             itemCount:
-                                                filteredJoinedActivities.length,
+                                                filteredJoinedActivities
+                                                    .length +
+                                                1,
                                             itemBuilder: (context, index) {
+                                              if (index ==
+                                                  filteredJoinedActivities
+                                                      .length) {
+                                                if (_isLoading) {
+                                                  return Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  );
+                                                }
+
+                                                if (!_profileActivitiesHasNextPage) {
+                                                  return SizedBox.shrink();
+                                                }
+
+                                                return Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: 12.h,
+                                                  ),
+                                                  child: CustomButton(
+                                                    text: "See more",
+                                                    fontSize: 16.r,
+                                                    fontweight: FontWeight.bold,
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        profileActivitiesPage +=
+                                                            1;
+                                                      });
+                                                      _joinedActivities(
+                                                        loadMore: true,
+                                                      );
+                                                    },
+                                                  ),
+                                                );
+                                              }
+
                                               final activity =
                                                   filteredJoinedActivities[index];
 

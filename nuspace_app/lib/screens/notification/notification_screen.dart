@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import '../../constants.dart';
 import '../../services/connectivity_service.dart';
 import '../../utils/internalserverdialog.dart';
+import '../../widgets/custombutton.dart';
 import '../../widgets/customfont.dart';
 import '../../widgets/snackbarhelper.dart';
 
@@ -30,6 +31,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
   List<Map<String, dynamic>> earlierNotifications = [];
   bool _isLoading = true;
 
+  int limit = 20;
+  int page = 1;
+  bool hasNextPage = true;
+
   late ConnectivityService connectivityService;
 
   @override
@@ -42,7 +47,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     _fetchNotification();
   }
 
-  Future<void> _fetchNotification() async {
+  Future<void> _fetchNotification({bool loadMore = false}) async {
     final token = await storage.read(key: "auth_token");
     final userId = await storage.read(key: "user_id");
     print("userId: $userId");
@@ -71,7 +76,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       final response = await http
           .get(
             Uri.parse(
-              '${AppConfig.baseUrl}/api/notification/fetch-notification/$userId',
+              '${AppConfig.baseUrl}/api/notification/fetch-notification/$userId?page=$page&limit=$limit',
             ),
             headers: {
               'Content-Type': 'application/json',
@@ -86,9 +91,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
         print("respondeData: $responseData");
         if (mounted) {
           setState(() {
-            notification = List<Map<String, dynamic>>.from(
-              responseData['notifications'] ?? [],
+            final newNotification = List<Map<String, dynamic>>.from(
+              responseData['data'] ?? [],
             );
+
+            if (loadMore) {
+              notification.addAll(newNotification);
+            } else {
+              notification = newNotification;
+            }
+
+            hasNextPage = responseData['pagination']?['hasNextPage'] ?? false;
+
             _isLoading = false;
           });
           print("printing notifications: $notification");
@@ -428,6 +442,27 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         },
                       ),
                     ),
+                  ],
+
+                  if (hasNextPage) ...[
+                    SizedBox(height: 16.h),
+                    if (_isLoading)
+                      Center(child: CircularProgressIndicator())
+                    else
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: CustomButton(
+                          text: "See more",
+                          fontSize: 16.r,
+                          fontweight: FontWeight.bold,
+                          onPressed: () {
+                            setState(() {
+                              page += 1;
+                            });
+                            _fetchNotification(loadMore: true);
+                          },
+                        ),
+                      ),
                   ],
                 ],
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nuspace_app/constants.dart';
 import 'package:nuspace_app/screens/activities/activityscreen.dart';
 import 'package:nuspace_app/screens/rso/homescreen.dart';
@@ -82,16 +83,23 @@ class _MainScreenState extends State<MainScreen> {
         backgroundColor: whitetheme,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        items: const [
+        unselectedFontSize: 14.r,
+        selectedFontSize: 16.r,
+        selectedLabelStyle: TextStyle(fontWeight: FontWeight.w600),
+        unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w500),
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
+            icon: Icon(Icons.home_outlined, size: 30.r),
             label: "Home",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
+            icon: Icon(Icons.calendar_today, size: 25.r),
             label: "Activity",
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person, size: 30.r),
+            label: "Profile",
+          ),
         ],
       ),
     );

@@ -14,6 +14,7 @@ import 'package:http/http.dart' as http;
 import '../../constants.dart';
 import '../../services/connectivity_service.dart';
 import '../../utils/internalserverdialog.dart';
+import '../../widgets/custombutton.dart';
 import '../../widgets/snackbarhelper.dart';
 
 class InterestScreen extends StatefulWidget {
@@ -29,6 +30,10 @@ class _InterestScreenState extends State<InterestScreen> {
   List<Map<String, String>> allTags = [];
   bool _isLoading = false;
   String? _errormessage;
+
+  int limit = 25;
+  int page = 1;
+  bool hasNextPage = true;
 
   late ConnectivityService connectivityService;
 
@@ -60,8 +65,7 @@ class _InterestScreenState extends State<InterestScreen> {
     });
   }
 
-  //search yung chunk by chunk load..shouhld it be done in backend or frontend
-  Future<void> fetchTagsChoices() async {
+  Future<void> fetchTagsChoices({bool loadMore = false}) async {
     setState(() {
       _errormessage = null;
     });
@@ -78,7 +82,9 @@ class _InterestScreenState extends State<InterestScreen> {
       final response = await apiRequest((accessToken) {
         return http
             .get(
-              Uri.parse('${AppConfig.baseUrl}/api/tags/tagsChoices'),
+              Uri.parse(
+                '${AppConfig.baseUrl}/api/tags/tagsChoices?page=$page&limit=$limit',
+              ),
               headers: {
                 'Content-Type': 'application/json',
                 'Authorization': accessToken,
@@ -92,16 +98,24 @@ class _InterestScreenState extends State<InterestScreen> {
       final responseData = jsonDecode(response.body);
       print("Response data: $responseData");
       if (response.statusCode == 200 && responseData['success'] == true) {
+        final newTags = List<Map<String, String>>.from(
+          responseData['tags'].map(
+            (tag) => {
+              'label': tag['label'].toString(),
+              'value': tag['value'].toString(),
+            },
+          ),
+        );
+
         if (mounted) {
           setState(() {
-            allTags = List<Map<String, String>>.from(
-              responseData['tags'].map(
-                (tag) => {
-                  'label': tag['label'].toString(),
-                  'value': tag['value'].toString(),
-                },
-              ),
-            );
+            if (loadMore) {
+              allTags.addAll(newTags);
+            } else {
+              allTags = newTags;
+            }
+
+            hasNextPage = responseData['pagination']?['hasNextPage'] ?? false;
           });
           _isLoading = false;
         }
@@ -305,20 +319,20 @@ class _InterestScreenState extends State<InterestScreen> {
                       ),
                     ),
 
-                    SizedBox(height: 60.h),
+                    SizedBox(height: 40.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CustomFont(
                           text: "Interests:",
-                          fontSize: 14.r,
+                          fontSize: 16.r,
                           fontWeight: FontWeight.w500,
                         ),
                         SizedBox(width: 3.w),
                         //display the number of chosen interests
                         CustomFont(
                           text: "${selectedInterests.length} / 5",
-                          fontSize: 14.r,
+                          fontSize: 16.r,
                           fontWeight: FontWeight.bold,
                           color:
                               selectedInterests.length >= 5
@@ -332,26 +346,44 @@ class _InterestScreenState extends State<InterestScreen> {
                       child: SingleChildScrollView(
                         keyboardDismissBehavior:
                             ScrollViewKeyboardDismissBehavior.manual,
-                        child: Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: 8.r,
-                          runSpacing: 8.r,
-                          children:
-                              allTags.map((tag) {
-                                final tagLabel = tag['label']!;
-                                final bool isSelected = selectedInterests
-                                    .contains(tagLabel);
-                                final bool isDisabled =
-                                    selectedInterests.length >= 5 &&
-                                    !isSelected;
+                        child: Column(
+                          children: [
+                            Wrap(
+                              alignment: WrapAlignment.center,
+                              spacing: 8.r,
+                              runSpacing: 8.r,
+                              children:
+                                  allTags.map((tag) {
+                                    final tagLabel = tag['label']!;
+                                    final bool isSelected = selectedInterests
+                                        .contains(tagLabel);
+                                    final bool isDisabled =
+                                        selectedInterests.length >= 5 &&
+                                        !isSelected;
 
-                                return InterestChip(
-                                  label: tag['label']!,
-                                  isSelected: isSelected,
-                                  isDisabled: isDisabled,
-                                  onTap: () => _toggleInterests(tagLabel),
-                                );
-                              }).toList(),
+                                    return InterestChip(
+                                      label: tag['label']!,
+                                      isSelected: isSelected,
+                                      isDisabled: isDisabled,
+                                      onTap: () => _toggleInterests(tagLabel),
+                                    );
+                                  }).toList(),
+                            ),
+                            // Pagination button
+                            if (hasNextPage)
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 12.h),
+                                child: CustomButton(
+                                  text: "See more",
+                                  fontSize: 16.r,
+                                  fontweight: FontWeight.bold,
+                                  onPressed: () {
+                                    setState(() => page += 1);
+                                    fetchTagsChoices(loadMore: true);
+                                  },
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     ),

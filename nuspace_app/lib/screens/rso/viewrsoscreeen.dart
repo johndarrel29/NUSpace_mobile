@@ -49,6 +49,7 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
     _fetchRSODetails();
   }
 
+  //remove activities from the endpoint
   Future<void> _fetchRSODetails() async {
     print("View RSO Screen rsoId: ${widget.rsoId}");
     //check for internet connection
@@ -234,7 +235,7 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
                             text:
                                 rsoDetails?['RSO_snapshot']?['acronym'] ??
                                 "RSO Acronym",
-                            fontSize: 16.r,
+                            fontSize: 18.r,
                             fontWeight: FontWeight.w600,
                           ),
                           subtitle: Padding(
@@ -243,7 +244,7 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
                               text:
                                   rsoDetails?['RSO_snapshot']?['name'] ??
                                   "RSO Name",
-                              fontSize: 14.r,
+                              fontSize: 16.r,
                             ),
                           ),
                         ),
@@ -274,7 +275,7 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
                         CustomTabSwitch(
                           tabs: ["Details", "Activities"],
                           selectedIndex: _selectedIndex,
-                          fontSize: 14,
+                          fontSize: 16,
                           onTabSelected: (value) {
                             setState(() {
                               _selectedIndex = value;
@@ -294,10 +295,20 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
                                     Align(
                                       alignment: Alignment.centerLeft,
                                       child: CustomFont(
+                                        text: "Description",
+                                        fontSize: 16.r,
+                                        textAlign: TextAlign.justify,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 10.h),
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: CustomFont(
                                         text:
                                             rsoDetails?['RSO_snapshot']?['description'] ??
                                             "RSO Description",
-                                        fontSize: 14.r,
+                                        fontSize: 16.r,
                                         textAlign: TextAlign.justify,
                                       ),
                                     ),
@@ -306,7 +317,7 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
                                       alignment: Alignment.centerLeft,
                                       child: CustomFont(
                                         text: "Officers",
-                                        fontSize: 14.r,
+                                        fontSize: 16.r,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),

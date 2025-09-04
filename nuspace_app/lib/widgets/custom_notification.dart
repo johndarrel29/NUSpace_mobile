@@ -44,20 +44,20 @@ class CustomNotification extends StatelessWidget {
         padding: EdgeInsets.only(bottom: 5.h),
         child: CustomFont(
           text: title,
-          fontSize: 16.r,
+          fontSize: 18.r,
           fontWeight: isRead ? FontWeight.w500 : FontWeight.bold,
           overflow: TextOverflow.ellipsis,
         ),
       ),
       subtitle: CustomFont(
         text: message,
-        fontSize: 14.r,
+        fontSize: 16.r,
         overflow: TextOverflow.ellipsis,
         maxLines: 2,
       ),
       trailing: CustomFont(
         text: getTimeAgo(createdAt),
-        fontSize: 12.r,
+        fontSize: 16.r,
         color: Colors.grey,
       ),
     );

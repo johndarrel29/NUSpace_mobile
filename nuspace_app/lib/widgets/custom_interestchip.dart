@@ -16,7 +16,7 @@ class InterestChip extends StatelessWidget {
     required this.isSelected,
     required this.onTap,
     this.isDisabled = false,
-    this.fontSize = 14,
+    this.fontSize = 15,
   });
 
   @override

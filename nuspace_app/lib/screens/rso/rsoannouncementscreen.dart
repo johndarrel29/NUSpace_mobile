@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:nuspace_app/config/config.dart';
 import 'package:nuspace_app/services/api_service.dart';
+import 'package:nuspace_app/widgets/custombutton.dart';
 import 'package:nuspace_app/widgets/customtabswitch.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -28,11 +29,17 @@ class RSOAnnouncementScreen extends StatefulWidget {
 
 class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
   final storage = FlutterSecureStorage();
-  Map<String, dynamic>? announcementResponse;
-  Map<String, dynamic>? rsoDetails;
+  List<dynamic> _activities = [];
   List<dynamic> _announcements = [];
   bool _isLoading = true;
   int _selectedIndex = 0;
+  int announcementlimit = 5;
+  int announcementpage = 1;
+  bool _announcementHasNextPage = true;
+
+  int activitiesLimit = 5;
+  int activitiesPage = 1;
+  bool _activitiesHasNextPage = true;
 
   late ConnectivityService connectivityService;
 
@@ -44,10 +51,10 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
       listen: false,
     );
     _fetchAnnouncements();
-    _fetchRSODetails();
+    _fetchRSOActivities();
   }
 
-  Future<void> _fetchAnnouncements() async {
+  Future<void> _fetchAnnouncements({bool append = false}) async {
     print("View announcement screen rsoId: ${widget.rsoId}");
     //check for internet connection
     if (!connectivityService.isConnected) {
@@ -61,7 +68,7 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
         return http
             .get(
               Uri.parse(
-                '${AppConfig.baseUrl}/api/student/announcements/getStudentAnnouncement/${widget.rsoId}',
+                '${AppConfig.baseUrl}/api/student/announcements/getStudentAnnouncement/${widget.rsoId}?page=$announcementpage&limit=$announcementlimit',
               ),
               headers: {
                 'Content-Type': 'application/json',
@@ -78,10 +85,16 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
       if (response.statusCode == 200 && responseData['success'] == true) {
         if (mounted) {
           setState(() {
-            final List<dynamic> announcementList =
-                responseData['sortedAnnouncements'] ?? [];
+            final List<dynamic> announcementList = responseData['data'] ?? [];
+            if (append) {
+              _announcements.addAll(announcementList);
+            } else {
+              _announcements = announcementList;
+            }
+
+            _announcementHasNextPage =
+                responseData['pagination']?['hasNextPage'] ?? false;
             _isLoading = false;
-            _announcements = announcementList;
           });
         }
         print("Announcements fetched :$_announcements");
@@ -117,7 +130,7 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
     }
   }
 
-  Future<void> _fetchRSODetails() async {
+  Future<void> _fetchRSOActivities({bool append = false}) async {
     print("View RSO Screen rsoId: ${widget.rsoId}");
     //check for internet connection
     if (!connectivityService.isConnected) {
@@ -131,7 +144,7 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
         return http
             .get(
               Uri.parse(
-                '${AppConfig.baseUrl}/api/student/rso/viewRSO/${widget.rsoId}',
+                '${AppConfig.baseUrl}/api/student/activities/getRSOActivities/${widget.rsoId}?page=$activitiesPage&limit=$activitiesLimit',
               ),
               headers: {
                 'Content-Type': 'application/json',
@@ -148,19 +161,27 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
       if (response.statusCode == 200 && responseData['success'] == true) {
         if (mounted) {
           setState(() {
-            rsoDetails = responseData['rsoDetails'];
+            final List<dynamic> activitiesList = responseData['data'] ?? [];
+
+            if (append) {
+              _activities.addAll(activitiesList);
+            } else {
+              _activities = activitiesList;
+            }
+
+            _activitiesHasNextPage = responseData['pagination']?['hasNextPage'];
             _isLoading = false;
           });
         }
-        print("Printing rso details success: $rsoDetails");
+        print("Printing activities list success: $_activities");
       } else {
         print(
           "Error code ${response.statusCode} and message ${responseData['message']}",
         );
         setState(() {
-          rsoDetails = null;
+          _activities = [];
         });
-        print("Printing rso details failed: $rsoDetails");
+        print("Printing activities list failed: $_activities");
       }
     } on TimeoutException {
       // Handle Timeout (Server Down)
@@ -236,26 +257,6 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
               ? Center(
                 child: CircularProgressIndicator(color: nuBlue, strokeAlign: 5),
               )
-              : _announcements.isEmpty
-              ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.info_outline_rounded,
-                      color: Colors.grey,
-                      size: 50.r,
-                    ),
-                    SizedBox(height: 5.h),
-                    CustomFont(
-                      text: "No RSO announcements available",
-                      fontSize: 16.r,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey,
-                    ),
-                  ],
-                ),
-              )
               : Column(
                 children: [
                   CustomTabSwitch(
@@ -293,9 +294,52 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
   }
 
   Widget _buildAnnouncements() {
+    if (_announcements.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.info_outline_rounded, color: Colors.grey, size: 50.r),
+            SizedBox(height: 5.h),
+            CustomFont(
+              text: "No RSO announcements available",
+              fontSize: 16.r,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey,
+            ),
+          ],
+        ),
+      );
+    }
+
     return ListView.builder(
-      itemCount: _announcements.length,
+      itemCount: _announcements.length + 1,
       itemBuilder: (context, index) {
+        if (index == _announcements.length) {
+          if (_isLoading) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (!_announcementHasNextPage) {
+            return SizedBox.shrink();
+          }
+
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 12.h),
+            child: CustomButton(
+              text: "See more",
+              fontSize: 16.r,
+              fontweight: FontWeight.bold,
+              onPressed: () {
+                setState(() {
+                  announcementpage += 1;
+                });
+                _fetchAnnouncements(append: true);
+              },
+            ),
+          );
+        }
+
         final announcement = _announcements[index];
 
         String formattedDate = '';
@@ -343,24 +387,55 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
   }
 
   Widget _rsoActivities() {
-    final activities = rsoDetails?['RSO_activities'] ?? [];
-
-    if (activities.isEmpty) {
+    if (_activities.isEmpty) {
       return Center(
-        child: CustomFont(
-          text: "No Activities Available in this RSO",
-          fontSize: 16.r,
-          fontWeight: FontWeight.w600,
-          color: Colors.grey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.info_outline_rounded, color: Colors.grey, size: 50.r),
+            SizedBox(height: 5.h),
+            CustomFont(
+              text: "No Activities Available in this RSO",
+              fontSize: 16.r,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey,
+            ),
+          ],
         ),
       );
     }
 
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: activities.length,
+      itemCount: _activities.length + 1,
       itemBuilder: (context, index) {
-        final activity = activities[index];
+        if (index == _activities.length) {
+          if (_isLoading) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (!_activitiesHasNextPage) {
+            return SizedBox.shrink();
+          }
+
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 12.h),
+            child: CustomButton(
+              text: "See More",
+              fontSize: 16.r,
+              fontweight: FontWeight.bold,
+              onPressed: () {
+                setState(() {
+                  activitiesPage += 1;
+                });
+                _fetchRSOActivities(append: true);
+              },
+            ),
+          );
+        }
+
+        final activity = _activities[index];
+        print("Printing activity $activity");
 
         //parse the date from backend
         DateTime? startDate;
@@ -378,7 +453,7 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
                 : "No date available";
 
         return ViewRSOActivityCard(
-          imageUrl: activity['Activity_image'],
+          imageUrl: activity['imageUrl'] ?? '',
           name: activity['Activity_name'],
           date: dateString,
           description: activity["Activity_description"],

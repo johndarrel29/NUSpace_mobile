@@ -529,23 +529,31 @@ class _ViewActivityScreenState extends State<ViewActivityScreen> {
                               ],
                             ] else if (activityDetails?['Activity_date_status'] ==
                                 'done') ...[
-                              CustomButton(
-                                text: "Activity Feedback",
-                                height: 40.h,
-                                fontSize: 14.r,
-                                fontweight: FontWeight.bold,
-                                onPressed: () {
-                                  Navigator.of(context).pushNamed(
-                                    '/activityForms',
-                                    arguments: {
-                                      'activityId': activityDetails?['_id'],
-                                      'formType': 'post-activity',
-                                    },
-                                  );
-                                },
-                              ),
+                              if (activityDetails?['Activity_feedback_deadline'] !=
+                                      null &&
+                                  DateTime.now().isBefore(
+                                    DateTime.parse(
+                                      activityDetails!['Activity_feedback_deadline'],
+                                    ),
+                                  )) ...[
+                                CustomButton(
+                                  //may deadline to
+                                  text: "Activity Feedback",
+                                  height: 40.h,
+                                  fontSize: 14.r,
+                                  fontweight: FontWeight.bold,
+                                  onPressed: () {
+                                    Navigator.of(context).pushNamed(
+                                      '/activityForms',
+                                      arguments: {
+                                        'activityId': activityDetails?['_id'],
+                                        'formType': 'post-activity',
+                                      },
+                                    );
+                                  },
+                                ),
+                              ],
                             ],
-
                             SizedBox(height: 50.h),
                           ],
                         ),

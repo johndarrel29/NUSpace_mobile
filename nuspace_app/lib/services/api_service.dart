@@ -91,19 +91,6 @@ Future<http.Response?> apiRequest(
 
   final response = await requestFunc(accessToken);
 
-  // Handle unauthorized from backend
-  if (response.statusCode == 401 || response.statusCode == 400) {
-    if (context != null) {
-      await logoutAndRedirect(
-        context,
-        deviceToken: deviceToken,
-        userId: userId,
-      );
-    }
-    print("Unauthorized. Please log in again.");
-    return null;
-  }
-
   return response;
 }
 

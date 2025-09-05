@@ -91,10 +91,10 @@ class MainApp extends StatelessWidget {
             '/homeScreen': (context) => const HomeScreen(),
             '/activityScreen': (context) => const ActivityScreen(),
             '/profileScreen': (context) => const ProfileScreen(),
-            '/mainScreen': (context) => MainScreen(),
-            '/notificationScreen': (context) => NotificationScreen(),
+            '/mainScreen': (context) => const MainScreen(),
+            '/notificationScreen': (context) => const NotificationScreen(),
             '/notificationSettingsScreen':
-                (context) => NotificationSettingsScreen(),
+                (context) => const NotificationSettingsScreen(),
           },
           onGenerateRoute: (settings) {
             //routes that needs arguments

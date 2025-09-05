@@ -161,8 +161,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
                 SizedBox(width: 5.w),
                 CustomFont(
-                  text: "NU\nSpace",
-                  fontSize: 14.r,
+                  text: "NU",
+                  fontSize: 22.r,
+                  color: nuGold,
+                  useGoogleFont: false,
+                  fontFamily: 'ClanOT',
+                  fontWeight: FontWeight.bold,
+                ),
+                CustomFont(
+                  text: "Space",
+                  fontSize: 22.r,
                   color: nuBlue,
                   useGoogleFont: false,
                   fontFamily: 'ClanOT',

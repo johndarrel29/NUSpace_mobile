@@ -252,8 +252,16 @@ class _InterestScreenState extends State<InterestScreen> {
               ),
               SizedBox(width: 5.w),
               CustomFont(
-                text: "NU\nSpace",
-                fontSize: 14.r,
+                text: "NU",
+                fontSize: 22.r,
+                color: nuGold,
+                useGoogleFont: false,
+                fontFamily: 'ClanOT',
+                fontWeight: FontWeight.bold,
+              ),
+              CustomFont(
+                text: "Space",
+                fontSize: 22.r,
                 color: nuBlue,
                 useGoogleFont: false,
                 fontFamily: 'ClanOT',
@@ -295,14 +303,24 @@ class _InterestScreenState extends State<InterestScreen> {
       body:
           allTags.isEmpty
               ? Center(
-                child: CustomFont(
-                  text:
-                      _errormessage == null
-                          ? "No interests choices available at the moment"
-                          : _errormessage!,
-                  fontSize: 16.r,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      color: Colors.grey.shade600,
+                      size: 50.r,
+                    ),
+                    CustomFont(
+                      text:
+                          _errormessage == null
+                              ? "No interests choices available at the moment"
+                              : _errormessage!,
+                      fontSize: 16.r,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ],
                 ),
               )
               : Padding(

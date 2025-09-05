@@ -218,8 +218,16 @@ class HomeScreenState extends State<HomeScreen> {
               ),
               SizedBox(width: 5.w),
               CustomFont(
-                text: "NU\nSpace",
-                fontSize: 14.r,
+                text: "NU",
+                fontSize: 22.r,
+                color: nuGold,
+                useGoogleFont: false,
+                fontFamily: 'ClanOT',
+                fontWeight: FontWeight.bold,
+              ),
+              CustomFont(
+                text: "Space",
+                fontSize: 22.r,
                 color: nuBlue,
                 useGoogleFont: false,
                 fontFamily: 'ClanOT',
@@ -269,11 +277,21 @@ class HomeScreenState extends State<HomeScreen> {
                             suggestedRSOs.isEmpty ||
                                     recommendationExplanation == null
                                 ? Center(
-                                  child: CustomFont(
-                                    text: "No RSO was recommended for you.",
-                                    fontSize: 14.r,
-                                    color: Colors.grey.shade600,
-                                    fontWeight: FontWeight.w600,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.info_outline,
+                                        color: Colors.grey.shade600,
+                                        size: 50.r,
+                                      ),
+                                      CustomFont(
+                                        text: "No RSO was recommended for you",
+                                        fontSize: 16.r,
+                                        color: Colors.grey.shade600,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ],
                                   ),
                                 )
                                 : SingleChildScrollView(
@@ -283,7 +301,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     children: [
                                       CustomFont(
                                         text: "Recommended RSO for you",
-                                        fontSize: 14.r,
+                                        fontSize: 16.r,
                                         fontWeight: FontWeight.w600,
                                         color: Colors.grey.shade600,
                                       ),
@@ -326,7 +344,7 @@ class HomeScreenState extends State<HomeScreen> {
                                         SizedBox(height: 5.h),
                                         CustomFont(
                                           text: "Other RSO for you",
-                                          fontSize: 14.r,
+                                          fontSize: 16.r,
                                           fontWeight: FontWeight.w600,
                                           color: Colors.grey.shade600,
                                         ),
@@ -368,11 +386,21 @@ class HomeScreenState extends State<HomeScreen> {
                         child:
                             joinedRSOs.isEmpty
                                 ? Center(
-                                  child: CustomFont(
-                                    text: "You haven't joined any RSO yet",
-                                    fontSize: 14.r,
-                                    color: Colors.grey.shade600,
-                                    fontWeight: FontWeight.w600,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.info_outline,
+                                        color: Colors.grey.shade600,
+                                        size: 50.r,
+                                      ),
+                                      CustomFont(
+                                        text: "You haven't joined any RSO yet",
+                                        fontSize: 16.r,
+                                        color: Colors.grey.shade600,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ],
                                   ),
                                 )
                                 : SingleChildScrollView(

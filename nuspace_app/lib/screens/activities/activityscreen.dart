@@ -297,8 +297,16 @@ class ActivityScreenState extends State<ActivityScreen> {
               ),
               SizedBox(width: 5.w),
               CustomFont(
-                text: "NU\nSpace",
-                fontSize: 14.r,
+                text: "NU",
+                fontSize: 22.r,
+                color: nuGold,
+                useGoogleFont: false,
+                fontFamily: 'ClanOT',
+                fontWeight: FontWeight.bold,
+              ),
+              CustomFont(
+                text: "Space",
+                fontSize: 22.r,
                 color: nuBlue,
                 useGoogleFont: false,
                 fontFamily: 'ClanOT',
@@ -347,12 +355,22 @@ class ActivityScreenState extends State<ActivityScreen> {
                         child:
                             activities.isEmpty
                                 ? Center(
-                                  child: CustomFont(
-                                    text:
-                                        "No Activities Available At The Moment",
-                                    fontSize: 16.r,
-                                    color: Colors.grey.shade600,
-                                    fontWeight: FontWeight.w600,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.info_outline,
+                                        color: Colors.grey.shade600,
+                                        size: 50.r,
+                                      ),
+                                      CustomFont(
+                                        text:
+                                            "No Activities Available At The Moment",
+                                        fontSize: 16.r,
+                                        color: Colors.grey.shade600,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ],
                                   ),
                                 )
                                 : GestureDetector(
@@ -541,11 +559,22 @@ class ActivityScreenState extends State<ActivityScreen> {
                         child:
                             joinedActivities.isEmpty
                                 ? Center(
-                                  child: CustomFont(
-                                    text:
-                                        "No Activities Available At The Moment",
-                                    fontSize: 16.r,
-                                    color: Colors.grey.shade600,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.info_outline,
+                                        color: Colors.grey.shade600,
+                                        size: 50.r,
+                                      ),
+                                      CustomFont(
+                                        text:
+                                            "No Activities Available At The Moment",
+                                        fontSize: 16.r,
+                                        color: Colors.grey.shade600,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ],
                                   ),
                                 )
                                 : GestureDetector(

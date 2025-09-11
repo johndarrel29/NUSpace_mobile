@@ -7,10 +7,20 @@ import 'package:nuspace_app/config/config.dart';
 
 final storage = FlutterSecureStorage();
 
+Future<String?> safeRead(String key) async {
+  try {
+    return await storage.read(key: key);
+  } catch (e) {
+    print("SecureStorage read error for $key: $e");
+    await storage.delete(key: key); // clear corrupted value
+    return null;
+  }
+}
+
 class AuthService {
   static Future<String?> refreshAccessToken(String refreshToken) async {
     try {
-      final String? deviceToken = await storage.read(key: "device_token");
+      final String? deviceToken = await safeRead("device_token");
       if (deviceToken == null) return null;
 
       final response = await http
@@ -40,8 +50,8 @@ class AuthService {
   }
 
   static Future<String> checkLoginStatus() async {
-    String? accessToken = await storage.read(key: "auth_token");
-    String? refreshToken = await storage.read(key: "refresh_token");
+    String? accessToken = await safeRead("auth_token");
+    String? refreshToken = await safeRead("refresh_token");
 
     if (accessToken != null) {
       try {

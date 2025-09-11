@@ -508,7 +508,7 @@ class _ViewActivityScreenState extends State<ViewActivityScreen> {
 
                             if (activityDetails?['Activity_date_status'] ==
                                 'upcoming') ...[
-                              if (activityDetails?['Acivity_publicity'] ==
+                              if (activityDetails?['Activity_publicity'] ==
                                       true ||
                                   isCurrentRSOMember == true) ...[
                                 CustomButton(
@@ -517,6 +517,13 @@ class _ViewActivityScreenState extends State<ViewActivityScreen> {
                                   fontSize: 14.r,
                                   fontweight: FontWeight.bold,
                                   onPressed: () {
+                                    if (!connectivityService.isConnected) {
+                                      print("No Internet Connection");
+                                      SnackbarHelper.showConnectivityStatus(
+                                        false,
+                                      );
+                                      return;
+                                    }
                                     Navigator.of(context).pushNamed(
                                       '/activityForms',
                                       arguments: {

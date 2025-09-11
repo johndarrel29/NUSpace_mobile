@@ -38,7 +38,9 @@ class ProfileScreenState extends State<ProfileScreen> {
       context,
       listen: false,
     );
-    refreshData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      refreshData();
+    });
   }
 
   void refreshData() {
@@ -53,6 +55,11 @@ class ProfileScreenState extends State<ProfileScreen> {
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
       SnackbarHelper.showConnectivityStatus(false);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
       return;
     }
 
@@ -272,6 +279,25 @@ class ProfileScreenState extends State<ProfileScreen> {
           _isLoading
               ? Center(
                 child: CircularProgressIndicator(color: nuBlue, strokeAlign: 5),
+              )
+              : !connectivityService.isConnected
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.wifi_off,
+                      color: Colors.grey.shade600,
+                      size: 50.r,
+                    ),
+                    CustomFont(
+                      text: "Connect to Internet",
+                      fontSize: 16.r,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ],
+                ),
               )
               : profileDetails == null
               ? Center(

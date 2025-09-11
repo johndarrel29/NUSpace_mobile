@@ -265,6 +265,25 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
               ? Center(
                 child: CircularProgressIndicator(color: nuBlue, strokeAlign: 5),
               )
+              : !connectivityService.isConnected
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.wifi_off,
+                      color: Colors.grey.shade600,
+                      size: 50.r,
+                    ),
+                    CustomFont(
+                      text: "Connect to Internet",
+                      fontSize: 16.r,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ],
+                ),
+              )
               : Column(
                 children: [
                   CustomTabSwitch(
@@ -468,6 +487,11 @@ class _RSOAnnouncementScreenState extends State<RSOAnnouncementScreen> {
           publicity: activity['Activity_publicity'],
           status: activity['Activity_date_status'],
           onTap: () {
+            if (!connectivityService.isConnected) {
+              print("No Internet Connection");
+              SnackbarHelper.showConnectivityStatus(false);
+              return;
+            }
             print("Printing activity ID: ${activity["_id"]}");
             Navigator.of(context).pushNamed(
               '/viewActivityScreen',

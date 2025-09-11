@@ -91,7 +91,10 @@ class _LoginScreenState extends State<LoginScreen> {
         final responseData = jsonDecode(response.body);
         print('response data $responseData');
 
-        if (response.statusCode == 200 && responseData['success'] == true) {
+        if (response.statusCode == 200 &&
+            responseData['success'] == true &&
+            response.headers['content-type']?.contains("application/json") ==
+                true) {
           //store token
           String token = responseData['token'];
           await storage.write(key: "auth_token", value: token);
@@ -141,6 +144,10 @@ class _LoginScreenState extends State<LoginScreen> {
             }
           }
         } else {
+          print("Non-JSON response: ${response.body}");
+          setState(() {
+            _errormessage = "Server error: ${response.statusCode}";
+          });
           //if the response is not successful and have errors
           if (responseData['success'] == false &&
               responseData['requiresEmailVerification'] == true) {

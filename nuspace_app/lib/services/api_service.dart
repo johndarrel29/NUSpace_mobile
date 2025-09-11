@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:nuspace_app/config/config.dart';
 
+import '../utils/internalserverdialog.dart';
 import 'auth_service.dart';
 
 final storage = FlutterSecureStorage();
@@ -89,9 +91,27 @@ Future<http.Response?> apiRequest(
     return null;
   }
 
-  final response = await requestFunc(accessToken);
+  try {
+    final response = await requestFunc(accessToken).timeout(
+      const Duration(seconds: 20),
+      onTimeout: () {
+        throw TimeoutException("API request timed out");
+      },
+    );
 
-  return response;
+    return response;
+  } on TimeoutException {
+    print("API request timeout!");
+    if (context != null) {
+      // Show error screen or snackbar
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const InternalServerDialog(),
+      );
+    }
+    return null;
+  }
 }
 
 Future<void> logoutAndRedirect(

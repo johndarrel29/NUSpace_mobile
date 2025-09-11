@@ -56,7 +56,9 @@ class ActivityScreenState extends State<ActivityScreen> {
       context,
       listen: false,
     );
-    refreshData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      refreshData();
+    });
     _searchController.addListener(_onSearchChanged);
     _yourActivitiesSearchController.addListener(_onYourActivitiesSearchChanged);
   }
@@ -113,6 +115,11 @@ class ActivityScreenState extends State<ActivityScreen> {
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
       SnackbarHelper.showConnectivityStatus(false);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
       return;
     }
 
@@ -185,9 +192,11 @@ class ActivityScreenState extends State<ActivityScreen> {
       print("Error in login $e");
       print("stacktrace: $stackTrace");
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -196,6 +205,11 @@ class ActivityScreenState extends State<ActivityScreen> {
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
       SnackbarHelper.showConnectivityStatus(false);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
       return;
     }
 
@@ -271,9 +285,11 @@ class ActivityScreenState extends State<ActivityScreen> {
       print("Error in login $e");
       print("stacktrace: $stackTrace");
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -320,6 +336,11 @@ class ActivityScreenState extends State<ActivityScreen> {
             padding: EdgeInsets.only(right: 6.w),
             child: IconButton(
               onPressed: () {
+                if (!connectivityService.isConnected) {
+                  print("No Internet Connection");
+                  SnackbarHelper.showConnectivityStatus(false);
+                  return;
+                }
                 Navigator.of(context).pushNamed('/notificationScreen');
               },
               icon: Icon(Icons.notifications, size: 24.r),
@@ -332,6 +353,25 @@ class ActivityScreenState extends State<ActivityScreen> {
           _isLoading
               ? Center(
                 child: CircularProgressIndicator(color: nuBlue, strokeAlign: 5),
+              )
+              : !connectivityService.isConnected
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.wifi_off,
+                      color: Colors.grey.shade600,
+                      size: 50.r,
+                    ),
+                    CustomFont(
+                      text: "Connect to Internet",
+                      fontSize: 16.r,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ],
+                ),
               )
               : Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
@@ -531,6 +571,16 @@ class ActivityScreenState extends State<ActivityScreen> {
                                                 publicity:
                                                     activity['Activity_publicity'],
                                                 onTap: () {
+                                                  if (!connectivityService
+                                                      .isConnected) {
+                                                    print(
+                                                      "No Internet Connection",
+                                                    );
+                                                    SnackbarHelper.showConnectivityStatus(
+                                                      false,
+                                                    );
+                                                    return;
+                                                  }
                                                   print(
                                                     "printing activity id: ${activity['_id']}",
                                                   );
@@ -740,6 +790,16 @@ class ActivityScreenState extends State<ActivityScreen> {
                                                 publicity:
                                                     activity['Activity_publicity'],
                                                 onTap: () {
+                                                  if (!connectivityService
+                                                      .isConnected) {
+                                                    print(
+                                                      "No Internet Connection",
+                                                    );
+                                                    SnackbarHelper.showConnectivityStatus(
+                                                      false,
+                                                    );
+                                                    return;
+                                                  }
                                                   print(
                                                     "printing activity id: ${activity['_id']}",
                                                   );

@@ -315,6 +315,7 @@ class _CustomFormState extends State<CustomForm> {
 
       case 'radiogroup': //radio button group
         return FormField<String>(
+          key: ValueKey("$pageName-$name"),
           initialValue: responses[pageName]?[name]?['answer'],
           validator: (value) {
             if (isRequired && (value == null || value.isEmpty)) {
@@ -357,13 +358,22 @@ class _CustomFormState extends State<CustomForm> {
                 ),
                 SizedBox(height: 5.h),
                 ...List<Widget>.from(
-                  (element['choices'] ?? []).map(
-                    (choice) => RadioListTile(
-                      key: ValueKey("$name-$choice"),
+                  (element['choices'] ?? []).map<Widget>((choice) {
+                    final choiceValue =
+                        choice is Map
+                            ? choice['value'] ?? ''
+                            : choice.toString();
+                    final choiceText =
+                        choice is Map
+                            ? choice['text'] ?? choiceValue
+                            : choice.toString();
+
+                    return RadioListTile(
+                      key: ValueKey("$name-$choiceValue"),
                       radioScaleFactor: 1.r,
                       activeColor: nuBlue,
-                      title: CustomFont(text: choice, fontSize: 16.r),
-                      value: choice,
+                      title: CustomFont(text: choiceText, fontSize: 16.r),
+                      value: choiceValue,
                       groupValue: formFieldState.value,
                       onChanged: (value) {
                         setState(() {
@@ -374,8 +384,8 @@ class _CustomFormState extends State<CustomForm> {
                         });
                         formFieldState.didChange(value);
                       },
-                    ),
-                  ),
+                    );
+                  }),
                 ),
 
                 if (formFieldState.hasError)
@@ -592,23 +602,32 @@ class _CustomFormState extends State<CustomForm> {
                 SizedBox(height: 10.h),
                 ...List<Widget>.from(
                   (element['choices'] ?? []).map((choice) {
+                    final choiceValue =
+                        choice is Map
+                            ? choice['value']?.toString() ?? ''
+                            : choice.toString();
+                    final choiceText =
+                        choice is Map
+                            ? choice['text']?.toString() ?? choiceValue
+                            : choice.toString();
+
                     final current = List<String>.from(
                       formFieldState.value ?? [],
                     );
-                    final isChecked = current.contains(choice);
+                    final isChecked = current.contains(choiceValue);
 
                     return CheckboxListTile(
-                      key: ValueKey("$name-$choice"),
+                      key: ValueKey("$name-$choiceValue"),
                       checkboxScaleFactor: 1.r,
                       activeColor: nuBlue,
-                      title: CustomFont(text: choice, fontSize: 16.r),
+                      title: CustomFont(text: choiceText, fontSize: 16.r),
                       value: isChecked,
                       onChanged: (checked) {
                         final updated = List<String>.from(current);
                         if (checked == true) {
-                          updated.add(choice);
+                          updated.add(choiceValue);
                         } else {
-                          updated.remove(choice);
+                          updated.remove(choiceValue);
                         }
 
                         setState(() {

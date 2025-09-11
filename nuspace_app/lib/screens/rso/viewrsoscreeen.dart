@@ -447,6 +447,11 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
                           fontSize: 14.r,
                           fontweight: FontWeight.bold,
                           onPressed: () {
+                            if (!connectivityService.isConnected) {
+                              print("No Internet Connection");
+                              SnackbarHelper.showConnectivityStatus(false);
+                              return;
+                            }
                             print("Registering membership");
                             Navigator.of(context).pushNamed(
                               '/membershipForms',

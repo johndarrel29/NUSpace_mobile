@@ -68,6 +68,9 @@ class _RSOMembershipFormsState extends State<RSOMembershipForms> {
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
       SnackbarHelper.showConnectivityStatus(false);
+      setState(() {
+        _isLoading = false;
+      });
       return;
     }
 
@@ -308,6 +311,25 @@ class _RSOMembershipFormsState extends State<RSOMembershipForms> {
           _isLoading
               ? Center(
                 child: CircularProgressIndicator(color: nuBlue, strokeAlign: 5),
+              )
+              : !connectivityService.isConnected
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.wifi_off,
+                      color: Colors.grey.shade600,
+                      size: 50.r,
+                    ),
+                    CustomFont(
+                      text: "Connect to Internet",
+                      fontSize: 16.r,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ],
+                ),
               )
               : membershipForm.isEmpty
               ? Center(

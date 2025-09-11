@@ -113,16 +113,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
             backgroundColor: Colors.green,
           );
         } else {
-          if (responseData.containsKey("errors")) {
-            List<dynamic> errors = responseData["errors"];
-            String formattedErrors = errors
-                .map((e) => "${e['msg']}")
-                .join("\n");
+          String errorMessage = "";
 
-            setState(() {
-              _errormessage = formattedErrors;
-            });
+          if (responseData.containsKey("errors")) {
+            // Validation errors array
+            List<dynamic> errors = responseData["errors"];
+            errorMessage = errors.map((e) => "${e['msg']}").join("\n");
+          } else if (responseData.containsKey("message")) {
+            // Single message (like email already registered)
+            errorMessage = responseData["message"];
+          } else {
+            // Fallback for unknown error
+            errorMessage = "An unexpected error occurred.";
           }
+
+          setState(() {
+            _errormessage = errorMessage;
+          });
         }
       } on TimeoutException {
         // Handle Timeout (Server Down)

@@ -548,16 +548,16 @@ class ActivityScreenState extends State<ActivityScreen> {
                                               return ActivityCard(
                                                 rsoName:
                                                     activity['RSO_details']?['RSO_name'] ??
-                                                    'RSO Name',
+                                                    '',
                                                 college:
                                                     activity['RSO_details']?['RSO_College'] ??
-                                                    'RSO College',
+                                                    '',
                                                 rsoImage:
                                                     activity['RSO_details']?['RSO_picture'] ??
                                                     '',
                                                 activityName:
                                                     activity['Activity_name'] ??
-                                                    "Activity_name",
+                                                    '',
                                                 activityImage:
                                                     activity['Activity_image'] ??
                                                     '',
@@ -567,7 +567,7 @@ class ActivityScreenState extends State<ActivityScreen> {
                                                     'Unknown',
                                                 description:
                                                     activity['Activity_description'] ??
-                                                    "Activity description",
+                                                    "",
                                                 publicity:
                                                     activity['Activity_publicity'],
                                                 onTap: () {

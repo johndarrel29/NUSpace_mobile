@@ -33,18 +33,20 @@ class _CustomFormState extends State<CustomForm> {
           final pageElements =
               (page['elements'] as List<dynamic>).map((el) {
                 final elementName = el['name'];
+                final elementTitle = el['title'] ?? elementName;
                 final studentAnswer = responses[pageName]?[elementName];
 
                 if (studentAnswer is Map && studentAnswer.containsKey('type')) {
-                  // Add 'name' here so backend knows which file corresponds
                   return {
-                    ...studentAnswer, // keep type + answer
-                    'name': elementName, // <-- add this line
+                    ...studentAnswer,
+                    'name': elementName,
+                    'title': elementTitle,
                   };
                 }
                 return {
                   'type': el['type'],
                   'name': elementName,
+                  'title': elementTitle,
                   'answer': studentAnswer,
                 };
               }).toList();

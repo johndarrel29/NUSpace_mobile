@@ -72,8 +72,16 @@ class ActivityScreenState extends State<ActivityScreen> {
 
   void refreshData() {
     print("Refreshing activity data");
-    _fetchAllActivities();
-    _joinedActivities();
+
+    // reset pagination state
+    activitesPage = 1;
+    _activitiesHasNextPage = true;
+
+    profileActivitiesPage = 1;
+    _profileActivitiesHasNextPage = true;
+
+    _fetchAllActivities(append: false);
+    _joinedActivities(loadMore: false);
   }
 
   void _onSearchChanged() {

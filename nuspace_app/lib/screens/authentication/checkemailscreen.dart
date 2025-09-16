@@ -85,7 +85,7 @@ class _CheckEmailScreenState extends State<CheckEmailScreen> {
 
           if (mounted) {
             Navigator.of(context).pushNamed(
-              '/forgotPasswordScreen',
+              '/changePasswordEmailCode',
               arguments: responseData['email'],
             );
           }

@@ -9,6 +9,7 @@ import 'package:nuspace_app/firebase_options.dart';
 import 'package:nuspace_app/screens/activities/activity_forms.dart';
 import 'package:nuspace_app/screens/activities/activityscreen.dart';
 import 'package:nuspace_app/screens/activities/viewactivityscreen.dart';
+import 'package:nuspace_app/screens/authentication/changepassword_emailcode.dart';
 import 'package:nuspace_app/screens/authentication/checkemailscreen.dart';
 import 'package:nuspace_app/screens/authentication/emailverificationscreen.dart';
 import 'package:nuspace_app/screens/authentication/forgotpasswordscreen.dart';
@@ -103,6 +104,12 @@ class MainApp extends StatelessWidget {
                 final email = settings.arguments as String?;
                 return MaterialPageRoute(
                   builder: (_) => EmailVerificationScreen(email: email),
+                );
+
+              case '/changePasswordEmailCode':
+                final email = settings.arguments as String?;
+                return MaterialPageRoute(
+                  builder: (_) => ChangePasswordEmailCode(email: email),
                 );
 
               case '/forgotPasswordScreen':

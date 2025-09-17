@@ -36,6 +36,8 @@ class CustomOfficerCard extends StatelessWidget {
                       imageUrl: imageUrl,
                       width: 80.r,
                       height: 80.r,
+                      memCacheWidth: 256,
+                      memCacheHeight: 256,
                       fit: BoxFit.cover,
                       placeholder:
                           (context, url) => Container(

@@ -261,6 +261,8 @@ class _ViewActivityScreenState extends State<ViewActivityScreen> {
                                   '',
                               width: 50.r,
                               height: 50.r,
+                              memCacheHeight: 100,
+                              memCacheWidth: 100,
                               fit: BoxFit.cover,
                               placeholder:
                                   (context, url) => Container(
@@ -351,6 +353,8 @@ class _ViewActivityScreenState extends State<ViewActivityScreen> {
                             imageUrl: activityDetails?['Activity_image'] ?? '',
                             height: 300.h,
                             width: double.infinity,
+                            memCacheHeight: 600,
+                            memCacheWidth: 800,
                             fit: BoxFit.contain,
                             placeholder:
                                 (context, url) => Container(

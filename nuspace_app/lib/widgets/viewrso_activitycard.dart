@@ -43,6 +43,8 @@ class ViewRSOActivityCard extends StatelessWidget {
                       ? CachedNetworkImage(
                         imageUrl: imageUrl,
                         fit: BoxFit.cover,
+                        memCacheWidth: 800,
+                        memCacheHeight: 600,
                         placeholder:
                             (context, url) => Container(
                               color: Colors.grey[300],

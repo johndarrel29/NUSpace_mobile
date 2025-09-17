@@ -298,6 +298,8 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
                               imageUrl: rsoDetails?['RSO_picture'] ?? '',
                               width: 50.r,
                               height: 50.r,
+                              memCacheHeight: 100,
+                              memCacheWidth: 100,
                               fit: BoxFit.cover,
                               placeholder:
                                   (context, url) => Container(

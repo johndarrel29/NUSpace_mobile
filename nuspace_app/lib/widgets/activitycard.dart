@@ -59,6 +59,8 @@ class ActivityCard extends StatelessWidget {
                       imageUrl: rsoImage,
                       width: 40.r,
                       height: 40.r,
+                      memCacheHeight: 100,
+                      memCacheWidth: 100,
                       fit: BoxFit.cover,
                       placeholder:
                           (context, url) => Container(
@@ -127,6 +129,8 @@ class ActivityCard extends StatelessWidget {
               child: CachedNetworkImage(
                 imageUrl: activityImage,
                 fit: BoxFit.cover,
+                memCacheWidth: 800,
+                memCacheHeight: 600,
                 placeholder:
                     (context, url) => Container(
                       color: Colors.grey[300],

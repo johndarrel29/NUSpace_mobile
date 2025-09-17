@@ -718,16 +718,25 @@ class _CustomFormState extends State<CustomForm> {
               dropdownColor: Colors.white,
               items:
                   (element['choices'] as List<dynamic>)
-                      .map<DropdownMenuItem<String>>(
-                        (choice) => DropdownMenuItem<String>(
-                          value: choice,
+                      .map<DropdownMenuItem<String>>((choice) {
+                        final choiceValue =
+                            choice is Map
+                                ? choice['value'].toString()
+                                : choice.toString();
+                        final choiceText =
+                            choice is Map
+                                ? choice['text'].toString()
+                                : choice.toString();
+
+                        return DropdownMenuItem<String>(
+                          value: choiceValue,
                           child: CustomFont(
-                            text: choice,
+                            text: choiceText,
                             fontSize: 16.r,
                             fontWeight: FontWeight.w500,
                           ),
-                        ),
-                      )
+                        );
+                      })
                       .toList(),
               onChanged: (value) {
                 setState(() {

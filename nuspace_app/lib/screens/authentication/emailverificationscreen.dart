@@ -121,7 +121,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       } else {
         print("Failed to send verification code: ${responseData['message']}");
         SnackbarHelper.showSnackbar(
-          responseData['message'] ?? "Failed to send verification code.",
+          "Please wait before requesting a new code",
           backgroundColor: Colors.red,
         );
       }

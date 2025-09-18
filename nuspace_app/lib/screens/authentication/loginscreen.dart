@@ -116,12 +116,6 @@ class _LoginScreenState extends State<LoginScreen> {
           String userRole = userData['role'];
           await storage.write(key: "user_role", value: userRole);
 
-          //send fcm device token to backend to be saved
-          // NotificationService.getAndPrintFCMToken(
-          //   userId: userData['id'],
-          //   role: userData['role'],
-          // );
-
           //check if the student_interest is not null
           bool hasInterests =
               userData['student_interests'] != null &&
@@ -145,9 +139,6 @@ class _LoginScreenState extends State<LoginScreen> {
           }
         } else {
           print("Non-JSON response: ${response.body}");
-          setState(() {
-            _errormessage = "Server error: ${response.statusCode}";
-          });
           //if the response is not successful and have errors
           if (responseData['success'] == false &&
               responseData['requiresEmailVerification'] == true) {
@@ -216,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         print("Failed to send verification code: ${responseData['message']}");
         SnackbarHelper.showSnackbar(
-          responseData['message'] ?? "Failed to send verification code.",
+          "Please wait before request a new code",
           backgroundColor: Colors.red,
         );
       }

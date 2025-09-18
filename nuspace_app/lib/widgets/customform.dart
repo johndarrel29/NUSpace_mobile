@@ -10,8 +10,14 @@ import 'package:nuspace_app/widgets/customfont.dart';
 class CustomForm extends StatefulWidget {
   final Map<String, dynamic> formJSON;
   final Function(Map<String, dynamic>) onSubmit;
+  final bool isSubmitting;
 
-  const CustomForm({super.key, required this.formJSON, required this.onSubmit});
+  const CustomForm({
+    super.key,
+    required this.formJSON,
+    required this.onSubmit,
+    required this.isSubmitting,
+  });
 
   @override
   State<CustomForm> createState() => _CustomFormState();
@@ -130,27 +136,44 @@ class _CustomFormState extends State<CustomForm> {
 
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: nuBlue),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        //if not last page then go next page
-                        if (_currentPage < pages.length - 1) {
-                          setState(() {
-                            _currentPage++;
-                          });
-                        } else {
-                          //last page then submit
-                          final minimalForm = buildMinimalFormWithResponses();
-                          widget.onSubmit(minimalForm);
-                        }
-                      }
-                    },
-                    child: CustomFont(
-                      text:
-                          _currentPage == pages.length - 1 ? "Submit" : "Next",
-                      fontSize: 14.r,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
+                    onPressed:
+                        widget.isSubmitting
+                            ? null
+                            : () async {
+                              if (_formKey.currentState!.validate()) {
+                                //if not last page then go next page
+                                if (_currentPage < pages.length - 1) {
+                                  setState(() {
+                                    _currentPage++;
+                                  });
+                                } else {
+                                  //last page then submit
+                                  final minimalForm =
+                                      buildMinimalFormWithResponses();
+
+                                  await widget.onSubmit(minimalForm);
+                                }
+                              }
+                            },
+                    child:
+                        widget.isSubmitting
+                            ? SizedBox(
+                              width: 18.r,
+                              height: 18.r,
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                            : CustomFont(
+                              text:
+                                  _currentPage == pages.length - 1
+                                      ? "Submit"
+                                      : "Next",
+                              fontSize: 14.r,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
                   ),
                 ],
               ),
@@ -693,6 +716,7 @@ class _CustomFormState extends State<CustomForm> {
             ),
             SizedBox(height: 10.h),
             DropdownButtonFormField<String>(
+              isExpanded: true,
               style: TextStyle(fontSize: 14.r),
               decoration: InputDecoration(
                 hintText: "Choose...",
@@ -734,6 +758,8 @@ class _CustomFormState extends State<CustomForm> {
                             text: choiceText,
                             fontSize: 16.r,
                             fontWeight: FontWeight.w500,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         );
                       })

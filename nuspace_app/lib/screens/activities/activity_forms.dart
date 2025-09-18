@@ -38,6 +38,7 @@ class _ActivityFormsState extends State<ActivityForms> {
   bool _isLoading = true;
   String? formId, activityId;
   bool? alreadySubmitted;
+  bool _isSubmittingResponse = false;
 
   late ConnectivityService connectivityService;
 
@@ -138,6 +139,12 @@ class _ActivityFormsState extends State<ActivityForms> {
   }
 
   Future<void> _submitResponse(Map<String, dynamic> answers) async {
+    if (_isSubmittingResponse) {
+      print("Already submitting, ignoring duplicate call");
+      return;
+    }
+    setState(() => _isSubmittingResponse = true);
+
     print("ActivityID: ${widget.activityId}");
     //check token..if no token, go back to landing screen
     final token = await storage.read(key: "auth_token");
@@ -245,6 +252,12 @@ class _ActivityFormsState extends State<ActivityForms> {
       );
       print("Error in login $e");
       print("stacktrace: $stackTrace");
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmittingResponse = false);
+      } else {
+        _isSubmittingResponse = false;
+      }
     }
   }
 
@@ -375,9 +388,10 @@ class _ActivityFormsState extends State<ActivityForms> {
               )
               : CustomForm(
                 formJSON: activityForm,
-                onSubmit: (responses) {
+                isSubmitting: _isSubmittingResponse,
+                onSubmit: (responses) async {
                   print("Raw response: $responses");
-                  _submitResponse(responses);
+                  await _submitResponse(responses);
                   responses.forEach((key, value) {
                     print("$key : $value");
                   });

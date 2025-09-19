@@ -20,7 +20,7 @@ class CustomTabSwitch extends StatelessWidget {
     this.activeColor = nuBlue,
     this.inactiveColor = Colors.grey,
     this.indicatorColor = nuBlue,
-    this.fontSize = 16,
+    this.fontSize = 18,
   });
 
   @override

@@ -41,11 +41,11 @@ class CustomTextFormField extends StatefulWidget {
     this.focusNode,
     this.fillColor = Colors.white,
     this.fontColor = Colors.black,
-    this.fontSize = 14.0,
+    this.fontSize = 16.0,
     this.padding,
-    this.hintTextSize = 14.0,
+    this.hintTextSize = 16.0,
     this.maxLength = 200,
-    this.floatingLabelSize = 16.0,
+    this.floatingLabelSize = 18.0,
     this.maxLine = 5,
   });
 

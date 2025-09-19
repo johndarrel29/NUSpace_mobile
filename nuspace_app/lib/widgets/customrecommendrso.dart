@@ -43,7 +43,7 @@ class CustomRecommendRSO extends StatelessWidget {
                   ),
                   child: CustomFont(
                     text: "Top $rank",
-                    fontSize: 12.r,
+                    fontSize: 14.r,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),

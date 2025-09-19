@@ -447,6 +447,7 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
                                               )
                                               .toList(),
                                     ),
+                                    SizedBox(height: 100.h),
                                   ],
                                 ),
                               ),

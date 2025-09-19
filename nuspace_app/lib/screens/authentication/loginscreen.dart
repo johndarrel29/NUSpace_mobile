@@ -355,7 +355,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onTap: _forgotPassword,
                   child: CustomFont(
                     text: "Forgot Password?",
-                    fontSize: 14.r,
+                    fontSize: 16.r,
                     color: nuBlue,
                     fontWeight: FontWeight.bold,
                   ),
@@ -373,9 +373,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 CustomButton(
                   text: "Log in",
-                  fontSize: 14.r,
+                  fontSize: 16.r,
                   fontweight: FontWeight.bold,
-                  height: 40.h,
+                  height: 45.h,
                   isLoading: _isLoading,
                   onPressed: () {
                     Duration(milliseconds: 300);

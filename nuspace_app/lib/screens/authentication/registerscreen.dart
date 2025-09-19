@@ -346,7 +346,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 25.h),
                   CustomButton(
                     text: "Create Account",
-                    height: 40.h,
+                    height: 45.h,
                     fontSize: 14.r,
                     fontweight: FontWeight.bold,
                     isLoading: _isLoading,

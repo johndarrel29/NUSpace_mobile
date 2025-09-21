@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nuspace_app/config/config.dart';
@@ -136,6 +137,21 @@ class NotificationService {
     required String userId,
     required String role,
   }) async {
+    await _messaging.requestPermission();
+
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      String? apnsToken;
+      int retries = 0;
+      while (apnsToken == null && retries < 10) {
+        apnsToken = await _messaging.getAPNSToken();
+        if (apnsToken == null) {
+          await Future.delayed(const Duration(seconds: 2));
+          retries++;
+        }
+      }
+      print('APNS Token: $apnsToken');
+    }
+
     String? token = await _messaging.getToken();
     print('FCM Token: $token');
 

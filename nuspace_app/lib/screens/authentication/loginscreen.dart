@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -70,7 +71,39 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       try {
-        String? fcmToken = await FirebaseMessaging.instance.getToken();
+
+        await FirebaseMessaging.instance.requestPermission();
+
+        String? fcmToken;
+
+        // Wait for APNS token on iOS before getting FCM token
+        if (defaultTargetPlatform == TargetPlatform.iOS) {
+          String? apnsToken;
+          int retries = 0;
+          while (apnsToken == null && retries < 10) {
+            apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+            if (apnsToken == null) {
+              await Future.delayed(const Duration(seconds: 1));
+              retries++;
+            }
+          }
+          print('APNS Token: $apnsToken');
+
+          //only get fcm token if APNS token is available
+          if (apnsToken != null) {
+            fcmToken = await FirebaseMessaging.instance.getToken();
+            print('FCM Token: $fcmToken');
+          } else {
+            print('APNS token not available, skipping FCM token');
+            // You can still proceed with login without FCM token
+            fcmToken = "temporary token not available";
+          }
+
+        } else {
+          //android get fcm token directly
+          fcmToken = await FirebaseMessaging.instance.getToken();
+        }
+
         if (fcmToken != null) {
           await storage.write(key: "device_token", value: fcmToken);
         }

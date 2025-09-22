@@ -238,6 +238,7 @@ class _NotificationSettingsScreenState
         scrolledUnderElevation: 0,
         centerTitle: true,
         leading: IconButton(
+          tooltip: 'Back',
           onPressed: () async {
             FocusScope.of(context).unfocus(); // first dismiss keyboard
             await Future.delayed(
@@ -286,7 +287,13 @@ class _NotificationSettingsScreenState
       body:
           _isLoading
               ? Center(
-                child: CircularProgressIndicator(color: nuBlue, strokeAlign: 5),
+                child: Semantics(
+                  label: 'Loading screen, please wait',
+                  child: CircularProgressIndicator(
+                    color: nuBlue,
+                    strokeAlign: 5,
+                  ),
+                ),
               )
               : Padding(
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 0.w),
@@ -304,8 +311,16 @@ class _NotificationSettingsScreenState
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           if (sound.replaceAll('.mp3', '') == _selectedSound)
-                            Icon(Icons.check, color: Colors.green, size: 25.r),
+                            Semantics(
+                              label: 'Selected',
+                              child: Icon(
+                                Icons.check,
+                                color: Colors.green,
+                                size: 25.r,
+                              ),
+                            ),
                           IconButton(
+                            tooltip: 'Play ${sound.replaceAll('.mp3', '')}',
                             icon: Icon(Icons.play_arrow, size: 25.r),
                             onPressed: () => _playSound(sound),
                           ),

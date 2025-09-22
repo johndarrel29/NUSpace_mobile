@@ -226,6 +226,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       appBar: AppBar(
         centerTitle: true,
         leading: IconButton(
+          tooltip: 'Back',
           onPressed: () async {
             FocusScope.of(context).unfocus(); // first dismiss keyboard
             await Future.delayed(
@@ -242,6 +243,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           Padding(
             padding: EdgeInsets.only(right: 6.w),
             child: IconButton(
+              tooltip: 'Notification Setting Screen',
               onPressed: () {
                 if (!connectivityService.isConnected) {
                   print("No Internet Connection");
@@ -291,7 +293,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
       body:
           _isLoading
               ? Center(
-                child: CircularProgressIndicator(color: nuBlue, strokeAlign: 5),
+                child: Semantics(
+                  label: 'Loading screen, please wait',
+                  child: CircularProgressIndicator(
+                    color: nuBlue,
+                    strokeAlign: 5,
+                  ),
+                ),
               )
               : !connectivityService.isConnected
               ? Center(

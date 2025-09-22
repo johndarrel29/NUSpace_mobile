@@ -35,45 +35,49 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: width ?? double.infinity,
-      height: height ?? 50.h,
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(borderRadius.r),
-        elevation: elevation,
-        child: Ink(
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(borderRadius.r),
-            border:
-                borderColor != null
-                    ? Border.all(color: borderColor!, width: borderWidth)
-                    : null,
-          ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(borderRadius.r),
-            splashColor: splashColor,
-            onTap: isLoading ? null : onPressed,
-            child: Center(
-              child:
-                  isLoading
-                      ? SizedBox(
-                        width: (height ?? 50.h) * 0.5,
-                        height: (height ?? 50.h) * 0.5,
-                        child: CircularProgressIndicator(
+    return Semantics(
+      label: text,
+      button: true,
+      child: SizedBox(
+        width: width ?? double.infinity,
+        height: height ?? 50.h,
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(borderRadius.r),
+          elevation: elevation,
+          child: Ink(
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(borderRadius.r),
+              border:
+                  borderColor != null
+                      ? Border.all(color: borderColor!, width: borderWidth)
+                      : null,
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(borderRadius.r),
+              splashColor: splashColor,
+              onTap: isLoading ? null : onPressed,
+              child: Center(
+                child:
+                    isLoading
+                        ? SizedBox(
+                          width: (height ?? 50.h) * 0.5,
+                          height: (height ?? 50.h) * 0.5,
+                          child: CircularProgressIndicator(
+                            color: textColor,
+                            strokeWidth: 4,
+                          ),
+                        )
+                        : CustomFont(
+                          text: text,
+                          fontSize: fontSize,
+                          fontWeight: fontweight,
                           color: textColor,
-                          strokeWidth: 4,
+                          useGoogleFont: true,
+                          fontFamily: 'Inter',
                         ),
-                      )
-                      : CustomFont(
-                        text: text,
-                        fontSize: fontSize,
-                        fontWeight: fontweight,
-                        color: textColor,
-                        useGoogleFont: true,
-                        fontFamily: 'Inter',
-                      ),
+              ),
             ),
           ),
         ),

@@ -84,7 +84,7 @@ class _CustomDropDownMenuState extends State<CustomDropDownMenu> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: widget.height ?? 48.r,
+                height: widget.height ?? 60.r,
                 width: widget.width ?? double.infinity,
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 decoration: BoxDecoration(
@@ -93,7 +93,7 @@ class _CustomDropDownMenuState extends State<CustomDropDownMenu> {
                     color:
                         state.hasError
                             ? Colors.red.shade400
-                            : Color(0xFF8B8B8B),
+                            : const Color(0x9C000000),
                     width: 1.5.sp,
                   ),
                 ),

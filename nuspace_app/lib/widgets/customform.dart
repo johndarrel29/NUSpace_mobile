@@ -157,12 +157,15 @@ class _CustomFormState extends State<CustomForm> {
                             },
                     child:
                         widget.isSubmitting
-                            ? SizedBox(
-                              width: 18.r,
-                              height: 18.r,
-                              child: const CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
+                            ? Semantics(
+                              label: 'Submitting, please wait',
+                              child: SizedBox(
+                                width: 18.r,
+                                height: 18.r,
+                                child: const CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
                               ),
                             )
                             : CustomFont(

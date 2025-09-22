@@ -87,7 +87,6 @@ class MainApp extends StatelessWidget {
             '/landingScreen': (context) => const LandingScreen(),
             '/loginScreen': (context) => const LoginScreen(),
             '/registerAccountScreen': (context) => const RegisterScreen(),
-            '/interestScreen': (context) => const InterestScreen(),
             '/checkEmailScreen': (context) => const CheckEmailScreen(),
             '/homeScreen': (context) => const HomeScreen(),
             '/activityScreen': (context) => const ActivityScreen(),
@@ -156,6 +155,14 @@ class MainApp extends StatelessWidget {
                         activityId: activityId,
                         formType: formType,
                       ),
+                );
+
+              case '/interestScreen':
+                final args = settings.arguments as Map<String, dynamic>?;
+                final fromProfile = args?['fromProfile'] ?? false;
+
+                return MaterialPageRoute(
+                  builder: (_) => InterestScreen(fromProfile: fromProfile),
                 );
 
               default:

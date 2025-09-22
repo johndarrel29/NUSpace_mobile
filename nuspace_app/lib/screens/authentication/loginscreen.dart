@@ -71,7 +71,6 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       try {
-
         await FirebaseMessaging.instance.requestPermission();
 
         String? fcmToken;
@@ -98,7 +97,6 @@ class _LoginScreenState extends State<LoginScreen> {
             // You can still proceed with login without FCM token
             fcmToken = "temporary token not available";
           }
-
         } else {
           //android get fcm token directly
           fcmToken = await FirebaseMessaging.instance.getToken();
@@ -292,6 +290,7 @@ class _LoginScreenState extends State<LoginScreen> {
         appBar: AppBar(
           centerTitle: true,
           leading: IconButton(
+            tooltip: 'Back',
             onPressed: () async {
               FocusScope.of(context).unfocus(); // First dismiss keyboard
               await Future.delayed(

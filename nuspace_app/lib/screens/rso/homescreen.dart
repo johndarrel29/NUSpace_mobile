@@ -257,6 +257,7 @@ class HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: EdgeInsets.only(right: 6.w),
             child: IconButton(
+              tooltip: 'Notification',
               onPressed: () {
                 if (!connectivityService.isConnected) {
                   print("No Internet Connection");
@@ -274,7 +275,13 @@ class HomeScreenState extends State<HomeScreen> {
       body:
           _isLoading
               ? Center(
-                child: CircularProgressIndicator(color: nuBlue, strokeAlign: 5),
+                child: Semantics(
+                  label: 'Loading screen, please wait',
+                  child: CircularProgressIndicator(
+                    color: nuBlue,
+                    strokeAlign: 5,
+                  ),
+                ),
               )
               : !connectivityService.isConnected
               ? Center(

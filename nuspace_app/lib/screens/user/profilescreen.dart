@@ -222,7 +222,9 @@ class ProfileScreenState extends State<ProfileScreen> {
     }
 
     if (mounted) {
-      Navigator.of(context).pushNamed('/interestScreen');
+      Navigator.of(
+        context,
+      ).pushNamed('/interestScreen', arguments: {'fromProfile': true});
     }
   }
 
@@ -268,6 +270,7 @@ class ProfileScreenState extends State<ProfileScreen> {
           Padding(
             padding: EdgeInsets.only(right: 6.w),
             child: IconButton(
+              tooltip: 'Log out',
               onPressed: _logout,
               icon: Icon(Icons.logout, size: 24.r),
               color: nuBlue,
@@ -278,7 +281,13 @@ class ProfileScreenState extends State<ProfileScreen> {
       body:
           _isLoading
               ? Center(
-                child: CircularProgressIndicator(color: nuBlue, strokeAlign: 5),
+                child: Semantics(
+                  label: 'Loading screen, please wait',
+                  child: CircularProgressIndicator(
+                    color: nuBlue,
+                    strokeAlign: 5,
+                  ),
+                ),
               )
               : !connectivityService.isConnected
               ? Center(

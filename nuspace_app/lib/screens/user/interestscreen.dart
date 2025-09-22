@@ -18,7 +18,8 @@ import '../../widgets/custombutton.dart';
 import '../../widgets/snackbarhelper.dart';
 
 class InterestScreen extends StatefulWidget {
-  const InterestScreen({super.key});
+  final bool fromProfile;
+  const InterestScreen({super.key, this.fromProfile = false});
 
   @override
   State<InterestScreen> createState() => _InterestScreenState();
@@ -29,6 +30,7 @@ class _InterestScreenState extends State<InterestScreen> {
   List<String> selectedInterests = []; //to store selected tag IDs
   List<Map<String, String>> allTags = [];
   bool _isLoading = false;
+  bool _loadingScreen = false;
   String? _errormessage;
 
   int limit = 25;
@@ -67,6 +69,7 @@ class _InterestScreenState extends State<InterestScreen> {
 
   Future<void> fetchTagsChoices({bool loadMore = false}) async {
     setState(() {
+      _loadingScreen = true;
       _errormessage = null;
     });
 
@@ -74,7 +77,7 @@ class _InterestScreenState extends State<InterestScreen> {
     if (!connectivityService.isConnected) {
       print("No Internet Connection");
       SnackbarHelper.showConnectivityStatus(false);
-      setState(() => _isLoading = false);
+      setState(() => _loadingScreen = false);
       return;
     }
 
@@ -117,7 +120,7 @@ class _InterestScreenState extends State<InterestScreen> {
 
             hasNextPage = responseData['pagination']?['hasNextPage'] ?? false;
           });
-          _isLoading = false;
+          _loadingScreen = false;
         }
       } else {
         print(
@@ -147,7 +150,7 @@ class _InterestScreenState extends State<InterestScreen> {
       print("stacktrace: $stackTrace");
     } finally {
       if (mounted) {
-        setState(() => _isLoading = false);
+        setState(() => _loadingScreen = false);
       }
     }
   }
@@ -239,6 +242,24 @@ class _InterestScreenState extends State<InterestScreen> {
         centerTitle: true,
         scrolledUnderElevation: 0,
         backgroundColor: whitetheme,
+        automaticallyImplyLeading: widget.fromProfile,
+        leading:
+            widget.fromProfile
+                ? IconButton(
+                  tooltip: 'Back',
+                  onPressed: () async {
+                    FocusScope.of(context).unfocus(); // first dismiss keyboard
+                    await Future.delayed(
+                      const Duration(milliseconds: 300), //change to 500 if want
+                    ); // wait for keyboard to fully close
+
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  icon: Icon(Icons.arrow_back, size: 24.r),
+                )
+                : null,
         title: FittedBox(
           fit: BoxFit.scaleDown,
           child: Row(
@@ -301,7 +322,17 @@ class _InterestScreenState extends State<InterestScreen> {
         ],
       ),
       body:
-          allTags.isEmpty
+          _loadingScreen
+              ? Center(
+                child: Semantics(
+                  label: 'Loading screen, please wait',
+                  child: CircularProgressIndicator(
+                    color: nuBlue,
+                    strokeAlign: 5,
+                  ),
+                ),
+              )
+              : allTags.isEmpty
               ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

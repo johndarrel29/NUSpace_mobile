@@ -213,6 +213,7 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
         backgroundColor: whitetheme,
         centerTitle: true,
         leading: IconButton(
+          tooltip: 'Back',
           onPressed: () async {
             FocusScope.of(context).unfocus(); // First dismiss keyboard
             await Future.delayed(
@@ -260,7 +261,13 @@ class _ViewRSOScreenState extends State<ViewRSOScreen> {
       body:
           _isLoading
               ? Center(
-                child: CircularProgressIndicator(color: nuBlue, strokeAlign: 5),
+                child: Semantics(
+                  label: 'Loading screen, please wait',
+                  child: CircularProgressIndicator(
+                    color: nuBlue,
+                    strokeAlign: 5,
+                  ),
+                ),
               )
               : rsoDetails == null
               ? Center(

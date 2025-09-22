@@ -171,6 +171,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           centerTitle: true,
           scrolledUnderElevation: 0,
           leading: IconButton(
+            tooltip: 'Back',
             onPressed: () async {
               FocusScope.of(context).unfocus(); // First dismiss keyboard
               await Future.delayed(

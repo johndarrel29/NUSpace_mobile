@@ -322,8 +322,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 SizedBox(height: 10.h),
                 CustomButton(
                   text: "Verify",
-                  height: 35.h,
-                  fontSize: 14.r,
+                  height: 45.h,
+                  fontSize: 16.r,
                   fontweight: FontWeight.bold,
                   isLoading: _isLoading,
                   onPressed: () {

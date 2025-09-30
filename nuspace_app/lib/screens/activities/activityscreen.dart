@@ -308,20 +308,7 @@ class ActivityScreenState extends State<ActivityScreen> {
       appBar: AppBar(
         scrolledUnderElevation: 0,
         backgroundColor: whitetheme,
-        leading: IconButton(
-          tooltip: 'Back',
-          onPressed: () async {
-            FocusScope.of(context).unfocus(); // First dismiss keyboard
-            await Future.delayed(
-              const Duration(milliseconds: 300),
-            ); // Wait for keyboard to fully close
-
-            if (context.mounted) {
-              Navigator.of(context).pop();
-            }
-          },
-          icon: Icon(Icons.arrow_back, size: 24.r),
-        ),
+        automaticallyImplyLeading: false,
         title: FittedBox(
           fit: BoxFit.scaleDown,
           child: Row(

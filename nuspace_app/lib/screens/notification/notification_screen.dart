@@ -225,6 +225,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         centerTitle: true,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           tooltip: 'Back',
           onPressed: () async {

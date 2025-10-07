@@ -245,6 +245,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       if (value == null || value.isEmpty) {
                         return "Please enter your first name";
                       }
+                      final nameRegExp = RegExp(r"^[a-zA-ZñÑ\s'-]+$");
+                      if (!nameRegExp.hasMatch(value)) {
+                        return "Only alphabetical characters are allowed";
+                      }
                       return null;
                     },
                   ),
@@ -260,6 +264,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Please enter your last name";
+                      }
+                      final nameRegExp = RegExp(r"^[a-zA-ZñÑ\s'-]+$");
+                      if (!nameRegExp.hasMatch(value)) {
+                        return "Only alphabetical characters are allowed";
                       }
                       return null;
                     },
@@ -277,6 +285,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       if (value == null || value.isEmpty) {
                         return "Please enter your NU email";
                       }
+                      final emailRegExp = RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      );
+                      if (!emailRegExp.hasMatch(value)) {
+                        return "Please enter a valid email address";
+                      }
+
                       return null;
                     },
                   ),

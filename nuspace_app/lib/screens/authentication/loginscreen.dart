@@ -363,10 +363,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       return "Please enter your NU email";
                     }
                     final emailRegExp = RegExp(
-                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      r'^[a-zA-Z._-]+@students\.national-u\.edu\.ph$',
                     );
+
                     if (!emailRegExp.hasMatch(value)) {
-                      return "Please enter a valid email address";
+                      return "Please enter a valid NU student email";
                     }
 
                     return null;

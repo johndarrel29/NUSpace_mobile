@@ -197,6 +197,67 @@ class ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _confirmLogout() async {
+    bool isLoading = false;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: whitetheme,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: const Text("Confirm Logout"),
+              content: const Text("Are you sure you want to log out?"),
+              actions: [
+                TextButton(
+                  style: TextButton.styleFrom(foregroundColor: nuBlue),
+                  onPressed:
+                      isLoading ? null : () => Navigator.pop(context, false),
+                  child: const Text("Cancel"),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: nuBlue,
+                    foregroundColor: whitetheme,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed:
+                      isLoading
+                          ? null
+                          : () async {
+                            setState(() => isLoading = true);
+
+                            Navigator.pop(context);
+
+                            await _logout();
+                          },
+                  child:
+                      isLoading
+                          ? SizedBox(
+                            height: 18,
+                            width: 18,
+                            child: CircularProgressIndicator(
+                              color: whitetheme,
+                              strokeWidth: 2,
+                            ),
+                          )
+                          : const Text("Logout"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   Future<void> _goToInterestScreen() async {
     //check token..if no token, go back to landing screen
     final token = await storage.read(key: "auth_token");
@@ -271,7 +332,7 @@ class ProfileScreenState extends State<ProfileScreen> {
             padding: EdgeInsets.only(right: 6.w),
             child: IconButton(
               tooltip: 'Log out',
-              onPressed: _logout,
+              onPressed: _confirmLogout,
               icon: Icon(Icons.logout, size: 24.r),
               color: nuBlue,
             ),

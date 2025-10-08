@@ -13,6 +13,7 @@ import 'package:nuspace_app/screens/authentication/changepassword_emailcode.dart
 import 'package:nuspace_app/screens/authentication/checkemailscreen.dart';
 import 'package:nuspace_app/screens/authentication/emailverificationscreen.dart';
 import 'package:nuspace_app/screens/authentication/forgotpasswordscreen.dart';
+import 'package:nuspace_app/screens/authentication/termandconditionscreen.dart';
 import 'package:nuspace_app/screens/notification/notification_screen.dart';
 import 'package:nuspace_app/screens/notification/notification_settings_screen.dart';
 import 'package:nuspace_app/screens/rso/homescreen.dart';
@@ -95,6 +96,8 @@ class MainApp extends StatelessWidget {
             '/notificationScreen': (context) => const NotificationScreen(),
             '/notificationSettingsScreen':
                 (context) => const NotificationSettingsScreen(),
+            '/termsAndConditionScreen':
+                (context) => const TermsAndConditionScreen(),
           },
           onGenerateRoute: (settings) {
             //routes that needs arguments

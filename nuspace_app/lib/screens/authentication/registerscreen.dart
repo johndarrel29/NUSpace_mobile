@@ -33,6 +33,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool _isAgreed = false;
   String? _errormessage, selectedCollege;
 
   late ConnectivityService connectivityService;
@@ -79,6 +80,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _errormessage = null;
         _isLoading = true;
       });
+      if (!_isAgreed) {
+        setState(() {
+          _errormessage = "You must agree to the Terms and Conditions.";
+        });
+        return;
+      }
 
       try {
         final response = await http
@@ -158,6 +165,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  void _openTermsAndConditions() {
+    Navigator.of(context).pushNamed('/termsAndConditionScreen');
   }
 
   @override
@@ -352,6 +363,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                     prefixIcon: Icons.school,
                   ),
+
+                  SizedBox(height: 15.h),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Checkbox(
+                        activeColor: nuBlue,
+                        value: _isAgreed,
+                        onChanged: (value) {
+                          setState(() {
+                            _isAgreed = value ?? false;
+                          });
+                        },
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: _openTermsAndConditions,
+                          child: Text.rich(
+                            TextSpan(
+                              text: "I agree with the ",
+                              style: TextStyle(fontSize: 16.r),
+                              children: [
+                                TextSpan(
+                                  text: "Terms and Conditions",
+                                  style: TextStyle(color: nuBlue),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
                   SizedBox(height: 25.h),
                   if (_errormessage != null)
                     CustomFont(
@@ -367,9 +412,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     fontSize: 14.r,
                     fontweight: FontWeight.bold,
                     isLoading: _isLoading,
-                    onPressed: () {
-                      _createAccount();
-                    },
+                    onPressed: _isAgreed ? _createAccount : null,
                   ),
                   SizedBox(height: 25.h),
                 ],

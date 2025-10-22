@@ -83,6 +83,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (!_isAgreed) {
         setState(() {
           _errormessage = "You must agree to the Terms and Conditions.";
+          _isLoading = false;
         });
         return;
       }
@@ -412,7 +413,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     fontSize: 14.r,
                     fontweight: FontWeight.bold,
                     isLoading: _isLoading,
-                    onPressed: _isAgreed ? _createAccount : null,
+                    onPressed: _createAccount,
                   ),
                   SizedBox(height: 25.h),
                 ],

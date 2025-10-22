@@ -147,6 +147,9 @@ class _LoginScreenState extends State<LoginScreen> {
           String userRole = userData['role'];
           await storage.write(key: "user_role", value: userRole);
 
+          String userEmail = userData['email'];
+          await storage.write(key: "user_email", value: userEmail);
+
           //check if the student_interest is not null
           bool hasInterests =
               userData['student_interests'] != null &&

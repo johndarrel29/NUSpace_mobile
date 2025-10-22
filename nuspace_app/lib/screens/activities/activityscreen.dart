@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:intl/intl.dart';
 import 'package:nuspace_app/config/config.dart';
 import 'package:nuspace_app/services/api_service.dart';
@@ -35,6 +36,8 @@ class ActivityScreenState extends State<ActivityScreen> {
   List<Map<String, dynamic>> filteredActivities = [];
   List<Map<String, dynamic>> joinedActivities = [];
   List<Map<String, dynamic>> filteredJoinedActivities = [];
+  String? rsoApplicationStatus;
+  String? userRole;
 
   int _selectedIndex = 0;
   bool _isLoading = true;
@@ -82,6 +85,7 @@ class ActivityScreenState extends State<ActivityScreen> {
 
     _fetchAllActivities(append: false);
     _joinedActivities(loadMore: false);
+    _fetchRSOApplicationStatus();
   }
 
   void _onSearchChanged() {
@@ -298,6 +302,95 @@ class ActivityScreenState extends State<ActivityScreen> {
           _isLoading = false;
         });
       }
+    }
+  }
+
+  // -------------------------------------------------------------
+  Future<void> _fetchRSOApplicationStatus() async {
+    //check for internet connection
+    if (!connectivityService.isConnected) {
+      print("No Internet Connection");
+      SnackbarHelper.showConnectivityStatus(false);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+      return;
+    }
+
+    final storedRole = await storage.read(key: "user_role");
+    if (storedRole == null) {
+      print("User role not found in local storage");
+      if (mounted) setState(() => _isLoading = false);
+      return;
+    }
+
+    //assign user role
+    userRole = storedRole;
+    print("User role: $userRole");
+
+    try {
+      final response = await apiRequest((accessToken) {
+        return http
+            .get(
+              Uri.parse(
+                '${AppConfig.baseUrl}/api/admin/rso/fetch/rso-application',
+              ),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': accessToken,
+              },
+            )
+            .timeout(Duration(seconds: 20));
+      }, context: mounted ? context : null);
+
+      if (response == null) return; //session expired
+
+      final responseData = jsonDecode(response.body);
+      print("Response data for RSO application status: $responseData");
+
+      if (response.statusCode == 200 && responseData['success'] == true) {
+        final data = responseData['data'];
+        setState(() {
+          rsoApplicationStatus =
+              data['rso_application_status']; //open or closed
+          _isLoading = false;
+        });
+        print("rso application status: $rsoApplicationStatus");
+      } else {
+        print(
+          "Failed to fetch RSO application status: ${responseData['message']}",
+        );
+      }
+    } catch (e, stackTrace) {
+      SnackbarHelper.showSnackbar(
+        "An error occurred. Please try again.",
+        backgroundColor: Colors.red,
+      );
+      print("Error in login $e");
+      print("stacktrace: $stackTrace");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _HowToApply() {
+    Navigator.of(context).pushNamed('/howToApplyScreen');
+  }
+
+  void _applyNewRSO() async {
+    final newRole = await Navigator.of(context).pushNamed('/createRSOScreen');
+
+    //if a new role was returned when RSO created successfully\
+    if (newRole != null && newRole is String) {
+      setState(() {
+        userRole = newRole; // update local state
+      });
     }
   }
 
@@ -841,6 +934,56 @@ class ActivityScreenState extends State<ActivityScreen> {
                   ],
                 ),
               ),
+      floatingActionButton:
+          (rsoApplicationStatus == "open")
+              ? SpeedDial(
+                //only display according to the date and also display only to students
+                icon: Icons.badge,
+                activeIcon: Icons.close,
+                backgroundColor: nuGold,
+                foregroundColor: nuBlue,
+
+                children: [
+                  SpeedDialChild(
+                    child: const Icon(Icons.group_add, color: nuBlue),
+                    labelBackgroundColor: nuGold,
+                    labelStyle: TextStyle(
+                      color: nuBlue,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    label: 'Apply new RSO',
+                    backgroundColor: nuGold,
+                    onTap: () {
+                      if (userRole != "Student") {
+                        SnackbarHelper.showSnackbar(
+                          "You are already part of an RSO",
+                        );
+                        return;
+                      }
+                      print("Going to apply new RSO screen");
+                      _applyNewRSO();
+                    },
+                  ),
+                  SpeedDialChild(
+                    child: const Icon(
+                      Icons.help_outline_rounded,
+                      color: nuBlue,
+                    ),
+                    labelBackgroundColor: nuGold,
+                    labelStyle: TextStyle(
+                      color: nuBlue,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    label: 'How to Apply?',
+                    backgroundColor: nuGold,
+                    onTap: () {
+                      print("going to How to apply screen");
+                      _HowToApply();
+                    },
+                  ),
+                ],
+              )
+              : null,
     );
   }
 }

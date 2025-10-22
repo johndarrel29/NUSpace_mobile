@@ -104,7 +104,10 @@ class _CustomDropDownMenuState extends State<CustomDropDownMenu> {
                     hint: Row(
                       children: [
                         Icon(
-                          selectedItem != null ? selectedIcon : Icons.school,
+                          widget.prefixIcon ??
+                              (selectedItem != null
+                                  ? selectedIcon
+                                  : Icons.school),
                           color: state.hasError ? Colors.red.shade900 : nuBlue,
                         ),
                         SizedBox(width: 12),
@@ -134,8 +137,11 @@ class _CustomDropDownMenuState extends State<CustomDropDownMenu> {
                             value: option["label"],
                             child: Row(
                               children: [
-                                Icon(option["icon"], color: nuBlue),
-                                SizedBox(width: 10.w),
+                                // only show option icon if it exists
+                                if (option["icon"] != null)
+                                  Icon(option["icon"], color: nuBlue),
+                                if (option["icon"] != null)
+                                  SizedBox(width: 10.w),
                                 CustomFont(
                                   text: option["label"],
                                   fontSize: widget.fontSize,

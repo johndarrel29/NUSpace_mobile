@@ -16,7 +16,9 @@ import 'package:nuspace_app/screens/authentication/forgotpasswordscreen.dart';
 import 'package:nuspace_app/screens/authentication/termandconditionscreen.dart';
 import 'package:nuspace_app/screens/notification/notification_screen.dart';
 import 'package:nuspace_app/screens/notification/notification_settings_screen.dart';
+import 'package:nuspace_app/screens/rso/create_rso_screen.dart';
 import 'package:nuspace_app/screens/rso/homescreen.dart';
+import 'package:nuspace_app/screens/rso/howtoapplyscreen.dart';
 import 'package:nuspace_app/screens/rso/rsoannouncementscreen.dart';
 import 'package:nuspace_app/screens/rso/rsomembershipforms.dart';
 import 'package:nuspace_app/screens/rso/viewrsoscreeen.dart';
@@ -98,6 +100,8 @@ class MainApp extends StatelessWidget {
                 (context) => const NotificationSettingsScreen(),
             '/termsAndConditionScreen':
                 (context) => const TermsAndConditionScreen(),
+            '/howToApplyScreen': (context) => const HowToApplyScreen(),
+            '/createRSOScreen': (context) => const CreateRSOScreen(),
           },
           onGenerateRoute: (settings) {
             //routes that needs arguments

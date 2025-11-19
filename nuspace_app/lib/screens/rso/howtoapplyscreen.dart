@@ -1,7 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nuspace_app/constants.dart';
 import 'package:nuspace_app/widgets/customfont.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:path/path.dart' as path;
 
 class HowToApplyScreen extends StatefulWidget {
   const HowToApplyScreen({super.key});
@@ -11,6 +18,84 @@ class HowToApplyScreen extends StatefulWidget {
 }
 
 class _HowToApplyScreenState extends State<HowToApplyScreen> {
+  bool isOpeningGPOA = false;
+  bool isOpeningBylaws = false;
+
+  Future<void> _openAssetFile(String assetPath, String fileName) async {
+    try {
+      print("Attempting to save asset: $assetPath");
+
+      // Load the asset
+      final byteData = await rootBundle.load(assetPath);
+      print("Asset loaded successfully: ${byteData.lengthInBytes} bytes");
+
+      // Only request permission for Android
+      Directory? downloadsDir;
+      if (Platform.isAndroid) {
+        // Request permission for storage
+        final status = await Permission.manageExternalStorage.request();
+        print("Permission status: $status");
+        if (!status.isGranted) {
+          print("Storage permission denied!");
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Storage permission is required to save the file."),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
+
+        // Downloads folder path
+        downloadsDir = Directory("/storage/emulated/0/Download");
+        if (!downloadsDir.existsSync()) {
+          downloadsDir.createSync(recursive: true);
+          print("Downloads directory created");
+        }
+      } else {
+        // iOS: use app documents
+        downloadsDir = await getApplicationDocumentsDirectory();
+      }
+
+      final filePath = path.join(downloadsDir.path, fileName);
+      final file = File(filePath);
+
+      // Write the file
+      await file.writeAsBytes(
+        byteData.buffer.asUint8List(
+          byteData.offsetInBytes,
+          byteData.lengthInBytes,
+        ),
+      );
+
+      print("File saved at: $filePath");
+
+      // Show SnackBar
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Files were saved to Downloads"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+
+      // Open the file
+      await OpenFilex.open(file.path);
+    } catch (e, s) {
+      print("ERROR saving/opening file: $e");
+      print(s);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to save/open file: $e"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,6 +156,77 @@ class _HowToApplyScreenState extends State<HowToApplyScreen> {
               title: "Inquiries",
               content:
                   "For questions or concerns, feel free to email: mannario@national-u.edu.ph\n\nThank you and stay safe!",
+            ),
+            ElevatedButton(
+              onPressed:
+                  isOpeningGPOA
+                      ? null
+                      : () async {
+                        setState(() => isOpeningGPOA = true);
+                        await _openAssetFile(
+                          "assets/files/GPOA-Template.docx",
+                          "GPOA-Template.docx",
+                        );
+                        if (mounted) setState(() => isOpeningGPOA = false);
+                      },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: nuBlue,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child:
+                  isOpeningGPOA
+                      ? SizedBox(
+                        height: 22,
+                        width: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                      : const Text(
+                        "Download GPOA Template",
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+            ),
+            SizedBox(height: 10.h),
+            ElevatedButton(
+              onPressed:
+                  isOpeningBylaws
+                      ? null
+                      : () async {
+                        setState(() => isOpeningBylaws = true);
+                        await _openAssetFile(
+                          "assets/files/Template_Organization_ByLaws.docx",
+                          "Template_Organization_ByLaws.docx",
+                        );
+                        if (mounted) setState(() => isOpeningBylaws = false);
+                      },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: nuBlue,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child:
+                  isOpeningBylaws
+                      ? SizedBox(
+                        height: 22,
+                        width: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                      : const Text(
+                        "Download By-Laws",
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
             ),
           ],
         ),

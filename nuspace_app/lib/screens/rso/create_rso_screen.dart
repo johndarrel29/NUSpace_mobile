@@ -452,9 +452,12 @@ class _CreateRSOScreenState extends State<CreateRSOScreen> {
       request.fields['RSO_acronym'] = _rsoacronymcontroller.text.trim();
       request.fields['RSO_description'] = _rsodescriptioncontroller.text.trim();
       request.fields['RSO_category'] = selectedCategory!;
-      request.fields['RSO_College'] = selectedCollege!;
       request.fields['RSO_Adviser'] = selectedAdviserId!;
       request.fields['RSO_tags'] = jsonEncode(selectedTags); // tag IDs list
+
+      if (selectedCollege != null) {
+        request.fields['RSO_College'] = selectedCollege!;
+      }
 
       // Attach logo/image file
       if (_selectedImage != null) {

@@ -232,17 +232,6 @@ class HomeScreenState extends State<HomeScreen> {
       return;
     }
 
-    final storedRole = await storage.read(key: "user_role");
-    if (storedRole == null) {
-      print("User role not found in local storage");
-      if (mounted) setState(() => _isLoading = false);
-      return;
-    }
-
-    //assign user role
-    userRole = storedRole;
-    print("User role: $userRole");
-
     try {
       final response = await apiRequest((accessToken) {
         return http
@@ -265,11 +254,14 @@ class HomeScreenState extends State<HomeScreen> {
 
       if (response.statusCode == 200 && responseData['success'] == true) {
         final data = responseData['data'];
+        print("Printing application status data: $data");
         setState(() {
           rsoApplicationStatus =
               data['rso_application_status']; //open or closed
           _isLoading = false;
+          userRole = responseData['role'];
         });
+        print("User role: $userRole");
         print("rso application status: $rsoApplicationStatus");
       } else {
         print(

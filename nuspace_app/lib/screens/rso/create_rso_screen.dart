@@ -68,7 +68,10 @@ class _CreateRSOScreenState extends State<CreateRSOScreen> {
   ];
 
   final List<Map<String, dynamic>> categoryOptions = [
-    {"label": "Probationary", "icon": Icons.category},
+    {"label": "Professional & Affiliates", "icon": Icons.groups},
+    {"label": "Professional", "icon": Icons.work},
+    {"label": "Special Interest", "icon": Icons.star},
+    {"label": "Office Aligned Organization", "icon": Icons.apartment},
   ];
 
   @override
@@ -441,7 +444,9 @@ class _CreateRSOScreenState extends State<CreateRSOScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final uri = Uri.parse('${AppConfig.baseUrl}/api/admin/rso/createRSO');
+      final uri = Uri.parse(
+        '${AppConfig.baseUrl}/api/student/rso/new-rso/application',
+      );
 
       final request = http.MultipartRequest('POST', uri);
 
